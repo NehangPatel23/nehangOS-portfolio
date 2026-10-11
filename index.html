@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en" data-os="mac">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="theme-color" content="#000000"/>
+<title>Nehang Patel — Desktop</title>
+<meta name="description" content="Nehang Patel — MS Computer Science @ USC Viterbi. Open this portfolio like a computer: a macOS desktop with windows, dock, and a working terminal."/>
+<meta name="author" content="Nehang Patel"/>
+<meta property="og:title" content="Nehang Patel — Desktop"/>
+<meta property="og:description" content="A portfolio you sit down at. A macOS desktop with projects, experience, resume, and a terminal."/>
+<meta property="og:type" content="website"/>
+<link rel="icon" type="image/png" href="assets/icons/macos/finder.png"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="assets/css/os.css"/>
+<link rel="stylesheet" href="assets/css/macos.css"/>
+</head>
+<body>
+<a class="skip-link" href="#desktop">Skip to desktop</a>
+
+<!-- BOOT -->
+<div id="boot" class="overlay" role="status" aria-live="polite">
+  <div class="boot-inner">
+    <div class="boot-mark" aria-hidden="true">
+      <svg viewBox="0 0 34 34" fill="none"><circle cx="7" cy="8" r="2.4" fill="#A78BF5"/><circle cx="7" cy="17" r="2.4" fill="#A78BF5"/><circle cx="7" cy="26" r="2.4" fill="#A78BF5"/><circle cx="17" cy="6" r="2.1" fill="none" stroke="#A78BF5" stroke-width="1.2"/><circle cx="17" cy="17" r="2.6" fill="#A78BF5"/><circle cx="17" cy="28" r="2.1" fill="none" stroke="#A78BF5" stroke-width="1.2"/><circle cx="27" cy="12" r="2.2" fill="#5EEAD4"/><circle cx="27" cy="22" r="2.2" fill="#5EEAD4"/></svg>
+    </div>
+    <p class="boot-name">NehangOS</p>
+    <div class="boot-bar"><div class="boot-fill"></div></div>
+  </div>
+</div>
+
+<!-- LOCK -->
+<div id="lock" class="overlay hidden" role="dialog" aria-label="Lock screen">
+  <div class="lock-vignette"></div>
+  <div class="lock-clock">
+    <p class="lock-time" id="lockTime">10:38</p>
+    <p class="lock-date" id="lockDate">Friday, August 28</p>
+  </div>
+  <div class="lock-user">
+    <div class="lock-avatar" aria-hidden="true">NP</div>
+    <p class="lock-uname">Nehang Patel</p>
+    <p class="lock-hint">Click or press any key to unlock</p>
+    <p class="lock-status"><span class="otw-dot"></span> Open to New Grad roles</p>
+  </div>
+</div>
+
+<!-- SHUTDOWN -->
+<div id="shutdown" class="overlay hidden">
+  <div class="boot-inner">
+    <p class="boot-name">Shutting down…</p>
+    <button class="ghost-btn" id="rebootBtn">Start up</button>
+  </div>
+</div>
+
+<div id="desktop">
+  <div class="wallpaper" id="wallpaper"></div>
+
+  <!-- macOS menu bar -->
+  <header class="menubar mac-only" role="menubar">
+    <div class="mb-left">
+      <button class="mb-apple" id="appleBtn" aria-label="Apple menu" title="NehangOS">
+        <svg viewBox="0 0 20 24" width="13" height="16"><path fill="currentColor" d="M16.2 12.6c0-3.3 2.7-4.4 2.8-4.5-1.5-2.2-3.9-2.5-4.7-2.5-2-.2-3.9 1.2-4.9 1.2s-2.6-1.2-4.3-1.1c-2.2.1-4.2 1.3-5.4 3.3-2.3 4-.6 9.9 1.6 13.1 1.1 1.6 2.4 3.3 4.1 3.3 1.6 0 2.3-1 4.3-1s2.6 1 4.4 1 2.9-1.6 4-3.2c1.3-1.8 1.8-3.6 1.8-3.7-.1 0-3.5-1.3-3.7-5.9zM13.3 3.8c.9-1.1 1.5-2.6 1.3-4.1-1.3.1-2.8.9-3.7 2-.8.9-1.6 2.4-1.4 3.8 1.5.1 2.9-.7 3.8-1.7z"/></svg>
+      </button>
+      <button class="mb-app" id="appMenuName" data-open="finder">Finder</button>
+      <button class="mb-item" data-menu="file">File</button>
+      <button class="mb-item" data-menu="edit">Edit</button>
+      <button class="mb-item" data-menu="view">View</button>
+      <button class="mb-item" data-menu="window">Window</button>
+      <button class="mb-item" data-menu="help">Help</button>
+    </div>
+    <div class="mb-right">
+      <span class="mb-batt" id="batteryPct" title="Battery">—</span>
+      <button class="mb-ico" id="wifiBtn" title="Wi-Fi" aria-label="Wi-Fi">
+        <svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M12 18.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm-4.2-3.1a6 6 0 0 1 8.4 0l-1.4 1.4a4 6 0 0 0-5.6 0l-1.4-1.4zm-2.9-2.9a10 10 0 0 1 14.2 0l-1.4 1.4a8 8 0 0 0-11.4 0L4.9 12.5zM12 4C6.5 4 1.6 6.6.1 10.4L1.5 11.8A13 13 0 0 1 12 6a13 13 0 0 1 10.5 5.8l1.4-1.4C22.4 6.6 17.5 4 12 4z"/></svg>
+      </button>
+      <button class="mb-ico" id="spotlightBtn" title="Spotlight (⌘K)" aria-label="Search">
+        <svg viewBox="0 0 24 24" width="13" height="13"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path stroke="currentColor" stroke-width="2" d="M20 20l-3.5-3.5"/></svg>
+      </button>
+      <button class="mb-ico" id="focusDot" hidden title="Focus" aria-label="Focus">
+        <svg viewBox="0 0 24 24" width="13" height="13"><path fill="currentColor" d="M14.6 3.1a1 1 0 0 0-1.1.2A9 9 0 1 0 20.7 16a1 1 0 0 0-.3-1.7 7 7 0 0 1-4.4-4.6 7 7 0 0 1 1.4-6.1 1 1 0 0 0-.8-1.5z"/></svg>
+      </button>
+      <button class="mb-ico" id="ccBtn" title="Control Center" aria-label="Control Center">
+        <svg viewBox="0 0 24 24" width="15" height="15"><rect x="3.2" y="3.5" width="7.2" height="17" rx="3.6" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="6.8" cy="8.2" r="2.1" fill="currentColor"/><rect x="13.6" y="3.5" width="7.2" height="17" rx="3.6" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="17.2" cy="15.8" r="2.1" fill="currentColor"/></svg>
+      </button>
+      <button class="mb-clock" id="menuClock"></button>
+    </div>
+  </header>
+
+  <div class="nook-scrim mac-only" id="nookScrim" hidden></div>
+  <div class="notch-island mac-only" id="notchIsland">
+    <button type="button" class="notch" id="notch" title="NotchNook" aria-expanded="false" aria-controls="nookPanel">
+      <svg class="notch-ico" viewBox="0 0 24 24" width="12" height="12"><rect width="24" height="24" rx="6" fill="#ff2d55"/><path d="M9 16a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7-9v8.2a2 2 0 1 0 1.5 2V9.2L20 8.5V6.8z" fill="#fff"/></svg>
+      <span class="notch-label">Dhaka</span>
+      <div class="eq" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+    </button>
+    <div class="nook-panel" id="nookPanel">
+      <div class="nook-panel-inner">
+        <div class="nook-page on" data-nook-page="nook">
+          <div class="nook-grid">
+            <section class="nook-card nook-media">
+              <div class="nook-media-row">
+                <span class="nook-art" id="nookArt" aria-hidden="true"></span>
+                <div class="nook-media-txt">
+                  <strong id="nookTrack">Dhaka</strong>
+                  <em id="nookArtist">Kevin MacLeod</em>
+                </div>
+              </div>
+              <div class="nook-transport">
+                <button type="button" data-nook="prev" aria-label="Previous">
+                  <svg viewBox="0 0 24 24"><path fill="currentColor" d="M6 5.5h1.8v13H6zm2 6.5 10.2 6.2V5.8z"/></svg>
+                </button>
+                <button type="button" class="nook-play" data-nook="play" aria-label="Play/Pause">
+                  <svg class="i-play" viewBox="0 0 24 24"><path fill="currentColor" d="M8 4.8v14.4L20.4 12z"/></svg>
+                  <svg class="i-pause" viewBox="0 0 24 24"><path fill="currentColor" d="M6.8 5h3.4v14H6.8zm6.8 0h3.4v14h-3.4z"/></svg>
+                </button>
+                <button type="button" data-nook="next" aria-label="Next">
+                  <svg viewBox="0 0 24 24"><path fill="currentColor" d="M16.2 5.5H18v13h-1.8zM5.8 5.8v12.4L16 12z"/></svg>
+                </button>
+                <button type="button" class="nook-open-music" data-open="music">Music</button>
+              </div>
+            </section>
+            <section class="nook-card nook-cal" data-open="calendar">
+              <p class="nook-kicker" id="nookCalKicker">Today</p>
+              <p class="nook-cal-num" id="nookCalNum">10</p>
+              <div class="nook-events" id="nookEvents"></div>
+            </section>
+            <section class="nook-card nook-apps">
+              <p class="nook-kicker">Shortcuts</p>
+              <div class="nook-app-grid">
+                <button type="button" data-open="contact" title="Mail"><img src="assets/icons/macos/mail.png" alt=""/><span>Mail</span></button>
+                <button type="button" data-open="messages" title="Messages"><img src="assets/icons/macos/messages.png" alt=""/><span>Messages</span></button>
+                <button type="button" data-open="calendar" title="Calendar"><img src="assets/icons/macos/calendar.png" alt=""/><span>Calendar</span></button>
+                <button type="button" data-open="music" title="Music"><img src="assets/icons/macos/music.png" alt=""/><span>Music</span></button>
+                <button type="button" data-open="safari" title="Safari"><img src="assets/icons/macos/safari.png" alt=""/><span>Safari</span></button>
+                <button type="button" data-open="resume" title="Resume"><img src="assets/icons/macos/preview.png" alt=""/><span>Resume</span></button>
+              </div>
+            </section>
+            <section class="nook-card nook-mirror">
+              <button type="button" class="nook-cam-btn" data-nook="mirror" id="nookMirrorBtn">
+                <video id="nookCam" playsinline muted autoplay></video>
+                <span class="nook-cam-off">
+                  <svg viewBox="0 0 24 24" width="22" height="22"><path fill="currentColor" d="M4.2 6.2h10.4A2.2 2.2 0 0 1 16.8 8.4v7.2a2.2 2.2 0 0 1-2.2 2.2H4.2A2.2 2.2 0 0 1 2 15.6V8.4A2.2 2.2 0 0 1 4.2 6.2zm12.8 3.1 5 2.6v.2l-5 2.6z"/></svg>
+                  <em>Mirror</em>
+                </span>
+              </button>
+            </section>
+          </div>
+        </div>
+        <div class="nook-page" data-nook-page="tray" hidden>
+          <div class="nook-tray" id="nookTray">
+            <p class="nook-tray-hint">Drop files here — they’ll sit in the notch until you grab them.</p>
+            <div class="nook-tray-items" id="nookTrayItems"></div>
+          </div>
+        </div>
+        <div class="nook-tabs">
+          <button type="button" class="on" data-nook-tab="nook">Nook</button>
+          <button type="button" data-nook-tab="tray">Tray</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="dropdown" id="appleMenu" hidden>
+    <button data-open="about-mac">About This Mac</button>
+    <button data-open="settings">System Settings…</button>
+    <hr/>
+    <button data-action="lock">Lock Screen</button>
+    <button data-action="restart">Restart…</button>
+    <button data-action="shutdown">Shut Down…</button>
+  </div>
+  <div class="dropdown" id="fileMenu" hidden>
+    <button data-open="about">Open About</button>
+    <button data-open="projects">Open Projects</button>
+    <button data-open="resume">Open Resume</button>
+    <hr/>
+    <button data-action="move-trash">Move to Trash</button>
+    <button data-action="close-front">Close Window</button>
+  </div>
+  <div class="dropdown" id="editMenu" hidden>
+    <button disabled>Cut</button>
+    <button disabled>Copy</button>
+    <button disabled>Paste</button>
+  </div>
+  <div class="dropdown" id="viewMenu" hidden>
+    <button data-open="settings" data-pane="wallpaper">Change wallpaper…</button>
+  </div>
+  <div class="dropdown" id="windowMenu" hidden>
+    <button data-open="about">About</button>
+    <button data-open="projects">Projects</button>
+    <button data-open="experience">Experience</button>
+    <button data-open="education">Education</button>
+    <button data-open="terminal">Terminal</button>
+    <button data-open="messages">Messages</button>
+    <button data-open="contact">Mail</button>
+  </div>
+  <div class="dropdown" id="helpMenu" hidden>
+    <button data-open="readme">README.md</button>
+    <button data-open="stack">Stack.md</button>
+    <button data-open="terminal">Open Terminal — type help</button>
+  </div>
+
+  <!-- Control Center -->
+  <div class="cc-scrim" id="ccScrim" hidden></div>
+  <div class="cc-panel" id="controlCenter" hidden role="dialog" aria-label="Control Center">
+    <div class="cc-top">
+      <div class="cc-mod cc-connect">
+        <button type="button" class="cc-row on" data-cc="wifi">
+          <span class="cc-badge" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><path d="M4.8 10.2a11 11 0 0 1 14.4 0"/><path d="M7.6 13.4a7 7 0 0 1 8.8 0"/><circle cx="12" cy="17.6" r="1.45" fill="currentColor" stroke="none"/></svg>
+          </span>
+          <span class="cc-txt"><strong>Wi-Fi</strong><em id="ccWifiName">NehangOS</em></span>
+        </button>
+        <button type="button" class="cc-row on" data-cc="bt">
+          <span class="cc-badge" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12.2 3.2 17.4 8l-3.6 3.6 3.6 3.6-5.2 4.8V13.2L8.6 16.8 7.2 15.4l4.2-3.6-4.2-3.6L8.6 6.8l3.6 3.6V3.2zm1.8 12.2v3.4l2.2-2zm0-8.8 2.2 2-2.2 2.2V6.6z"/></svg>
+          </span>
+          <span class="cc-txt"><strong>Bluetooth</strong><em id="ccBtName">On</em></span>
+        </button>
+        <button type="button" class="cc-row" data-cc="airdrop">
+          <span class="cc-badge" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="9.2" r="6.2"/><circle cx="12" cy="9.2" r="3.1"/><path fill="currentColor" stroke="none" d="M12 13.2 8.2 21h7.6z"/></svg>
+          </span>
+          <span class="cc-txt"><strong>AirDrop</strong><em id="ccAdName">Off</em></span>
+        </button>
+      </div>
+      <div class="cc-mod cc-now">
+        <img class="cc-now-app" src="assets/icons/macos/music.png" alt="" draggable="false"/>
+        <div class="cc-now-txt">
+          <strong id="ccTrack">Dhaka</strong>
+          <em id="ccArtist">Kevin MacLeod</em>
+        </div>
+        <div class="cc-now-ctrls">
+          <button type="button" data-cc="prev" aria-label="Previous">
+            <svg viewBox="0 0 24 24"><path fill="currentColor" d="M6 5.5h1.8v13H6zm2 6.5 10.2 6.2V5.8z"/></svg>
+          </button>
+          <button type="button" class="cc-play" data-cc="play" aria-label="Play/Pause">
+            <svg class="i-play" viewBox="0 0 24 24"><path fill="currentColor" d="M8 4.8v14.4L20.4 12z"/></svg>
+            <svg class="i-pause" viewBox="0 0 24 24"><path fill="currentColor" d="M6.8 5h3.4v14H6.8zm6.8 0h3.4v14h-3.4z"/></svg>
+          </button>
+          <button type="button" data-cc="next" aria-label="Next">
+            <svg viewBox="0 0 24 24"><path fill="currentColor" d="M16.2 5.5H18v13h-1.8zM5.8 5.8v12.4L16 12z"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="cc-mid">
+      <button type="button" class="cc-tile cc-stage on" data-cc="stage" title="Stage Manager" aria-label="Stage Manager">
+        <svg viewBox="0 0 24 24"><rect x="9.2" y="4.2" width="12.4" height="15.6" rx="2.4" fill="currentColor"/><rect x="2.2" y="4.2" width="5.2" height="4.2" rx="1.15" fill="currentColor"/><rect x="2.2" y="9.9" width="5.2" height="4.2" rx="1.15" fill="currentColor"/><rect x="2.2" y="15.6" width="5.2" height="4.2" rx="1.15" fill="currentColor"/></svg>
+      </button>
+      <button type="button" class="cc-tile mirror" data-cc="mirror" title="Screen Mirroring" aria-label="Screen Mirroring">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2.4" y="4.2" width="12.4" height="9.2" rx="2.1"/><rect x="8.2" y="10.4" width="13.2" height="9.4" rx="2.1"/></svg>
+      </button>
+    </div>
+    <div class="cc-utils">
+      <button type="button" class="cc-circ appearance" data-cc="dark" title="Appearance" aria-label="Appearance">
+        <span class="cc-split" aria-hidden="true"></span>
+      </button>
+      <button type="button" class="cc-sq shot" data-cc="shot" title="Screenshot" aria-label="Screenshot">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="6.4" width="18" height="13.4" rx="3.2"/><circle cx="12" cy="13.2" r="3.15"/><path fill="currentColor" stroke="none" d="M8.2 3.8h7.6c.6 0 1.1.4 1.1 1v1.1H7.1V4.8c0-.6.5-1 1.1-1z"/></svg>
+      </button>
+      <button type="button" class="cc-focus" data-cc="focus">
+        <span class="cc-moon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path fill="currentColor" d="M15.1 3.1a.9.95 0 0 0-1.05.2A8.7 8.7 0 1 0 20.7 16a.95.95 0 0 0-.3-1.65 6.7 6.7 0 0 1-4.2-4.4 6.7 6.7 0 0 1 1.35-5.9.95.95 0 0 0-.15-.95z"/></svg>
+        </span>
+        Focus
+      </button>
+    </div>
+    <div class="cc-mod cc-slide">
+      <p>Display</p>
+      <div class="cc-range">
+        <svg class="cc-sun sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.3" fill="currentColor"/><path fill="currentColor" d="M11.3 2.4h1.4v2.6h-1.4zM11.3 19h1.4v2.6h-1.4zM2.4 11.3h2.6v1.4H2.4zm16.6 0h2.6v1.4h-2.6zM5.2 4.6l1-1 1.9 1.9-1 1zM15.9 15.5l1.9 1.9-1 1-1.9-1.9zM17.8 4.6l1 1-1.9 1.9-1-1zM5.2 15.5l1 1 1.9-1.9-1-1z"/></svg>
+        <label class="cc-bar">
+          <span class="cc-bar-fill" data-fill="bright"></span>
+          <input id="ccBright" type="range" min="35" max="100" value="72" aria-label="Display brightness"/>
+        </label>
+        <svg class="cc-sun lg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2" fill="currentColor"/><path fill="currentColor" d="M11.15 1.5h1.7v3.1h-1.7zM11.15 19.4h1.7v3.1h-1.7zM1.4 11.15h3.1v1.7H1.4zm18.1 0h3.1v1.7h-3.1zM4.7 3.6l1.2-1.2 2.3 2.3-1.2 1.2zM15.8 16.1l2.3 2.3-1.2 1.2-2.3-2.3zM18.1 3.6l1.2 1.2-2.3 2.3-1.2-1.2zM4.7 16.1l1.2 1.2 2.3-2.3-1.2-1.2z"/></svg>
+      </div>
+    </div>
+    <div class="cc-mod cc-slide">
+      <p>Sound</p>
+      <div class="cc-range">
+        <svg class="cc-spk lo" viewBox="0 0 24 24"><path fill="currentColor" d="M4 9.1h3L11.6 5.2v13.6L7 14.9H4z"/></svg>
+        <label class="cc-bar">
+          <span class="cc-bar-fill" data-fill="vol"></span>
+          <input id="ccVol" type="range" min="0" max="100" value="68" aria-label="Sound volume"/>
+        </label>
+        <svg class="cc-spk hi" viewBox="0 0 24 24"><path fill="currentColor" d="M3.4 9.1h3L11 5.2v13.6L6.4 14.9H3.4zm10.6 1 1.25-1.25A5.6 5.6 0 0 1 16.7 12a5.6 5.6 0 0 1-1.45 3.15L14 13.9A3.8 3.8 0 0 0 15.2 12a3.8 3.8 0 0 0-1.2-1.9zm2.55-2.55 1.25-1.25A8.2 8.2 0 0 1 20.2 12a8.2 8.2 0 0 1-2.05 5.65l-1.25-1.25A6.5 6.5 0 0 0 18.6 12a6.5 6.5 0 0 0-1.65-4.45z"/></svg>
+        <button type="button" class="cc-airplay" data-cc="airplay" title="AirPlay" aria-label="AirPlay">
+          <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 14.2 6.4 21.2h11.2zM3.8 4.4h16.4v11.2h-3l-1.5-2.2h2.5V6.5H5.8v6.9h2.5L6.8 15.6H3.8z"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div id="shotFlash" hidden></div>
+
+  <div class="stage">
+    <aside class="col-left mac-only">
+      <article class="widget hero-card" data-drag="1">
+        <p class="hero-status"><span></span>Open to New Grad roles</p>
+        <h1>Nehang Patel</h1>
+        <p class="hero-role">Software Engineer</p>
+        <p class="hero-edu">MS CS @ USC Viterbi<br>Previously BS CS at University of Cincinnati</p>
+        <p class="hero-sub">I build full-stack products, data pipelines, and AI-backed tools — work that feels as considered as it functions.</p>
+        <a class="hero-cta" href="assets/resume/Resume_Nehang_Patel_Software_Engineer_2026-08.pdf" download="Resume_Nehang_Patel_Software_Engineer_2026-08.pdf">Download Resume</a>
+        <div class="hero-meta">
+          <button type="button" class="hero-ico" data-open="contact" title="Mail" aria-label="Mail"><img src="assets/icons/macos/mail.png" alt="" draggable="false"/></button>
+          <button type="button" class="hero-ico" data-safari="https://github.com/NehangPatel23" title="GitHub" aria-label="GitHub"><img src="assets/icons/macos/github.png" alt="" draggable="false"/></button>
+          <button type="button" class="hero-ico" data-safari="https://www.linkedin.com/in/nehangpatel/" title="LinkedIn" aria-label="LinkedIn"><img src="assets/icons/macos/linkedin.png" alt="" draggable="false"/></button>
+        </div>
+      </article>
+    </aside>
+
+    <div class="sticky s-yellow mac-only" data-drag="1" data-desk-id="sticky-yellow">
+      <button type="button" class="pin" title="Pin in place" aria-label="Pin in place" aria-pressed="false"></button>
+      <p>this is a Mac now.</p>
+      <p>please do not ask<br>where the files went.</p>
+      <span class="sticky-resize" aria-label="Resize"></span>
+    </div>
+    <div class="sticky s-pink mac-only" data-drag="1" data-desk-id="sticky-pink">
+      <button type="button" class="pin p-teal" title="Pin in place" aria-label="Pin in place" aria-pressed="false"></button>
+      <p>Cincinnati is 3 hours<br>ahead of whatever time<br>I think it is.</p>
+      <span class="sticky-resize" aria-label="Resize"></span>
+    </div>
+    <div class="sticky s-mint mac-only" data-drag="1" data-desk-id="sticky-mint">
+      <button type="button" class="pin p-purple" title="Pin in place" aria-label="Pin in place" aria-pressed="false"></button>
+      <p>git commit -m "fix"</p>
+      <p>it was not a fix.</p>
+      <span class="sticky-resize" aria-label="Resize"></span>
+    </div>
+    <div class="sticky s-sky mac-only" data-drag="1" data-desk-id="sticky-sky" data-open="contact" role="button" tabindex="0">
+      <button type="button" class="pin p-orange" title="Pin in place" aria-label="Pin in place" aria-pressed="false"></button>
+      <p>recruiters:</p>
+      <p>the Mail app actually<br>works. try it.</p>
+      <span class="sticky-resize" aria-label="Resize"></span>
+    </div>
+
+    <div class="desk-icons" id="deskIcons">
+      <button class="dicon" data-desk-id="icon-projects" data-file="projects"><img class="appico" src="assets/icons/macos/folder.png" alt="" draggable="false"/><span>Projects</span></button>
+      <button class="dicon" data-desk-id="icon-experience" data-file="experience"><img class="appico" src="assets/icons/macos/folder.png" alt="" draggable="false"/><span>Experience</span></button>
+      <button class="dicon" data-desk-id="icon-education" data-file="education"><img class="appico" src="assets/icons/macos/folder.png" alt="" draggable="false"/><span>Education</span></button>
+      <button class="dicon" data-desk-id="icon-resume" data-file="resume"><img class="appico" src="assets/icons/macos/pdf.svg" alt="" draggable="false"/><span>Resume.pdf</span></button>
+      <button class="dicon" data-desk-id="icon-readme" data-file="readme"><img class="appico" src="assets/icons/macos/textedit.png" alt="" draggable="false"/><span>README.md</span></button>
+      <button class="dicon" data-desk-id="icon-stack" data-file="stack"><img class="appico" src="assets/icons/macos/textedit.png" alt="" draggable="false"/><span>Stack.md</span></button>
+    </div>
+
+    <aside class="col-right" id="widgetStack">
+      <div class="wid-pair">
+        <div class="floater widget w-cal">
+          <p class="cal-dow" id="widDow">Friday</p>
+          <p class="cal-num" id="widDay">28</p>
+          <div class="cal-foot">
+            <p class="cal-when">Tomorrow</p>
+            <p class="cal-ev">Open to internships</p>
+          </div>
+        </div>
+        <div class="floater widget w-weather" id="weatherBox">
+          <p class="w-city">Los Angeles</p>
+          <p class="w-temp" id="wTemp">—°</p>
+          <p class="w-line"><span class="w-sun" aria-hidden="true"></span><span id="wDesc">Clear</span></p>
+          <p class="w-hl" id="wHiLo">H:—° L:—°</p>
+        </div>
+      </div>
+      <div class="floater widget clocks">
+        <div class="clock-row">
+          <div class="clock-cell">
+            <div class="analog" data-tz="America/Los_Angeles"><span class="n n12">12</span><span class="n n3">3</span><span class="n n6">6</span><span class="n n9">9</span><div class="h"></div><div class="m"></div><div class="s"></div></div>
+            <strong>Los Angeles</strong>
+            <span class="clk-day" data-tz="America/Los_Angeles">Today</span>
+            <span class="clk-off" data-tz="America/Los_Angeles"></span>
+          </div>
+          <div class="clock-cell">
+            <div class="analog" data-tz="America/New_York"><span class="n n12">12</span><span class="n n3">3</span><span class="n n6">6</span><span class="n n9">9</span><div class="h"></div><div class="m"></div><div class="s"></div></div>
+            <strong>Cincinnati</strong>
+            <span class="clk-day" data-tz="America/New_York">Today</span>
+            <span class="clk-off" data-tz="America/New_York"></span>
+          </div>
+          <div class="clock-cell">
+            <div class="analog" data-tz="Asia/Tokyo"><span class="n n12">12</span><span class="n n3">3</span><span class="n n6">6</span><span class="n n9">9</span><div class="h"></div><div class="m"></div><div class="s"></div></div>
+            <strong>Tokyo</strong>
+            <span class="clk-day" data-tz="Asia/Tokyo">Today</span>
+            <span class="clk-off" data-tz="Asia/Tokyo"></span>
+          </div>
+          <div class="clock-cell">
+            <div class="analog" data-tz="Europe/Paris"><span class="n n12">12</span><span class="n n3">3</span><span class="n n6">6</span><span class="n n9">9</span><div class="h"></div><div class="m"></div><div class="s"></div></div>
+            <strong>Paris</strong>
+            <span class="clk-day" data-tz="Europe/Paris">Today</span>
+            <span class="clk-off" data-tz="Europe/Paris"></span>
+          </div>
+        </div>
+      </div>
+      <button class="floater widget coffee" data-open="contact">
+        <span class="coffee-cup">✉</span>
+        <span>Say hello — it goes further than coffee</span>
+      </button>
+    </aside>
+
+    <div id="window-layer"></div>
+  </div>
+
+  <!-- macOS dock -->
+  <nav class="dock mac-only" id="dock" aria-label="Dock">
+    <div class="dock-inner" id="dockInner">
+      <button class="dapp" data-open="finder" data-tip="Finder"><img class="appico" src="assets/icons/macos/finder.png" alt="" draggable="false"/></button>
+      <button class="dapp hide-sm" data-open="launchpad" data-tip="Launchpad"><img class="appico" src="assets/icons/macos/launchpad.svg" alt="" draggable="false"/></button>
+      <button class="dapp" data-open="safari" data-tip="Safari"><img class="appico" src="assets/icons/macos/safari.png" alt="" draggable="false"/></button>
+      <button class="dapp" data-open="messages" data-tip="Messages"><img class="appico" src="assets/icons/macos/messages.png" alt="" draggable="false"/></button>
+      <button class="dapp" data-open="contact" data-tip="Mail"><img class="appico" src="assets/icons/macos/mail.png" alt="" draggable="false"/></button>
+      <button class="dapp hide-sm" data-open="calendar" data-tip="Calendar"><img class="appico" src="assets/icons/macos/calendar.png" alt="" draggable="false"/></button>
+      <button class="dapp" data-open="notes" data-tip="Notes"><img class="appico" src="assets/icons/macos/notes.png" alt="" draggable="false"/></button>
+      <button class="dapp hide-sm" data-open="resume" data-tip="Preview"><img class="appico" src="assets/icons/macos/preview.png" alt="" draggable="false"/></button>
+      <button class="dapp hide-sm dapp-ios" data-safari="https://github.com/NehangPatel23" data-tip="GitHub"><img class="appico ios" src="assets/icons/macos/github.png" alt="" draggable="false"/></button>
+      <button class="dapp hide-sm dapp-ios" data-safari="https://www.linkedin.com/in/nehangpatel/" data-tip="LinkedIn"><img class="appico ios" src="assets/icons/macos/linkedin.png" alt="" draggable="false"/></button>
+      <button class="dapp hide-sm" data-open="music" data-tip="Music"><img class="appico" src="assets/icons/macos/music.png" alt="" draggable="false"/></button>
+      <button class="dapp" data-open="terminal" data-tip="Terminal"><img class="appico" src="assets/icons/macos/terminal.png" alt="" draggable="false"/></button>
+      <button class="dapp hide-sm" data-open="settings" data-tip="System Settings"><img class="appico" src="assets/icons/macos/settings.png" alt="" draggable="false"/></button>
+      <div class="dock-sep hide-sm"></div>
+      <button class="dapp hide-sm" data-open="trash" data-tip="Trash"><img class="appico" src="assets/icons/macos/trash.png" alt="" draggable="false"/></button>
+    </div>
+  </nav>
+
+  <div class="launchpad" id="launchpad" hidden>
+    <input class="lp-search" id="lpSearch" placeholder="Search" />
+    <div class="lp-grid" id="lpGrid"></div>
+  </div>
+
+  <!-- Spotlight -->
+  <div class="spot-wrap" id="spotlight" hidden>
+    <div class="spot glass">
+      <div class="spot-head">
+        <svg viewBox="0 0 24 24" width="18" height="18"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path stroke="currentColor" stroke-width="2" d="M20 20l-3.5-3.5"/></svg>
+        <input type="search" id="spotInput" placeholder="Spotlight Search" autocomplete="off"/>
+      </div>
+      <div id="spotResults"></div>
+    </div>
+  </div>
+
+  <div class="ctx" id="ctxMenu" hidden>
+    <button data-open="finder">New Finder Window</button>
+    <button data-open="safari">Open Safari</button>
+    <button data-open="settings" data-pane="wallpaper">Change Wallpaper…</button>
+    <hr/>
+    <button data-action="lock">Lock Screen</button>
+  </div>
+  <div class="ctx" id="iconCtx" hidden>
+    <button data-icon-act="open">Open</button>
+    <hr/>
+    <button data-icon-act="trash">Move to Trash</button>
+  </div>
+  <div class="ctx" id="stickyCtx" hidden>
+    <button data-sticky-act="pin">Pin to Desktop</button>
+    <button data-sticky-act="unpin">Unpin</button>
+  </div>
+
+  <p class="wall-credit mac-only">Landscape wallpaper — Unsplash · NehangOS desktop preview</p>
+</div>
+
+<div id="toast" class="toast" hidden></div>
+
+<script src="assets/js/studies.js"></script>
+<script src="assets/js/os.js"></script>
+</body>
+</html>
