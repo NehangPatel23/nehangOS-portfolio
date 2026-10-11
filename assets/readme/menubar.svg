@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="820" height="36" viewBox="0 0 820 36" role="img" aria-label="NehangOS menu bar">
+  <rect width="820" height="36" rx="8" fill="#1c1c1e" fill-opacity="0.92"/>
+  <!-- Apple mark (path, no symbol fonts) -->
+  <path fill="#f5f5f7" transform="translate(14 7) scale(0.72)" d="M14.9 3.1c.7-1 1.9-1.7 3-1.9-.1 1.3-.5 2.5-1.4 3.4-.7.8-1.9 1.5-3.1 1.4-.1-1.2.5-2.5 1.5-2.9zm1.4 3.4c1.7-.1 3.2 1 4 1 .8 0 2.2-1.2 3.8-1 1 .1 3.4.7 4 3.4-1.8 1.1-1.5 3.9.3 4.9-.7 1.9-1.7 3.7-3.1 3.7-1.2 0-1.7-.8-3.3-.8s-2.2.8-3.3.8c-1.4 0-2.5-2-3.3-3.8-1.6-3.6-1.4-7.9.7-9.9 1.1-1.1 2.7-1.4 4.2-1.3z"/>
+  <text x="40" y="23" fill="#f5f5f7" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="700">NehangOS</text>
+  <text x="128" y="23" fill="#d1d1d6" font-family="system-ui, -apple-system, sans-serif" font-size="12">File</text>
+  <text x="164" y="23" fill="#d1d1d6" font-family="system-ui, -apple-system, sans-serif" font-size="12">Edit</text>
+  <text x="200" y="23" fill="#d1d1d6" font-family="system-ui, -apple-system, sans-serif" font-size="12">View</text>
+  <text x="244" y="23" fill="#d1d1d6" font-family="system-ui, -apple-system, sans-serif" font-size="12">Window</text>
+  <text x="308" y="23" fill="#d1d1d6" font-family="system-ui, -apple-system, sans-serif" font-size="12">Help</text>
+
+  <g transform="translate(548 0)" fill="#f5f5f7" font-family="system-ui, -apple-system, sans-serif" font-size="11">
+    <!-- Wi‑Fi arcs -->
+    <g transform="translate(0 8)" fill="none" stroke="#f5f5f7" stroke-width="1.6" stroke-linecap="round">
+      <path d="M2 14c3.2-3.2 8.4-3.2 11.6 0"/>
+      <path d="M4.2 11.2c2-2 5.2-2 7.2 0"/>
+      <path d="M6.4 8.5c1-1 2.8-1 3.8 0"/>
+      <circle cx="8" cy="16.2" r="1.3" fill="#f5f5f7" stroke="none"/>
+    </g>
+    <text x="28" y="23">NehangOS</text>
+    <text x="100" y="23">87%</text>
+    <rect x="128" y="11" width="26" height="14" rx="3" fill="none" stroke="#f5f5f7" stroke-width="1.4"/>
+    <rect x="154" y="15" width="3" height="6" rx="1" fill="#f5f5f7"/>
+    <rect x="131" y="14" width="18" height="8" rx="1.5" fill="#30d158"/>
+    <text x="168" y="23" font-weight="600">Sat 10:38 PM</text>
+  </g>
+</svg>

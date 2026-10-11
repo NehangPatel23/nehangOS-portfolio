@@ -208,6 +208,8 @@ aside.col-right{display:flex;flex-direction:column}
 .pin.p-teal{background:#1abc9c;box-shadow:0 2px 0 #0e7a66, inset 0 1px 0 rgba(255,255,255,.4)}
 .pin.p-purple{background:#8e44ad;box-shadow:0 2px 0 #5b2a73, inset 0 1px 0 rgba(255,255,255,.4)}
 .pin.p-orange{background:#e67e22;box-shadow:0 2px 0 #a35412, inset 0 1px 0 rgba(255,255,255,.4)}
+.pin.p-blue{background:#3498db;box-shadow:0 2px 0 #1f6f9f, inset 0 1px 0 rgba(255,255,255,.4)}
+.pin.p-rose{background:#e84393;box-shadow:0 2px 0 #a01f5f, inset 0 1px 0 rgba(255,255,255,.4)}
 .sticky-url{font-size:1rem;opacity:.8}
 html[data-os="mac"] .stage > .sticky{
   position:absolute;z-index:6;margin:0;
@@ -231,7 +233,16 @@ html[data-os="mac"] .stage > .sticky{
   background:#c5e8ff;color:#12324a;
 }
 .sticky.s-sky .pin{left:56%}
-
+.sticky.s-lilac{
+  left:58%;top:46%;width:210px;transform:rotate(-2.8deg);z-index:2;
+  background:#e0d4ff;color:#2e1a52;
+}
+.sticky.s-lilac .pin{left:48%}
+.sticky.s-peach{
+  left:18%;top:44%;width:200px;transform:rotate(3.4deg);z-index:3;
+  background:#ffd6b8;color:#4a2410;
+}
+.sticky.s-peach .pin{left:58%}
 .wid-pair{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .w-cal,.w-weather{
   aspect-ratio:1;min-height:0;padding:12px 14px 12px;
@@ -290,6 +301,10 @@ html[data-os="mac"] .stage > .sticky{
   width:86px;display:flex;flex-direction:column;align-items:center;gap:6px;
   color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.8);font-size:12px;font-weight:500;
   cursor:grab;
+}
+.dicon > span{
+  max-width:86px;text-align:center;line-height:1.25;
+  display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;
 }
 .dicon[hidden]{display:none !important}
 .dicon:active{cursor:grabbing}
@@ -541,6 +556,14 @@ h2.app-h{font-size:1.7rem;font-weight:600;letter-spacing:-.03em;margin-bottom:8p
   font-size:16.5px;line-height:1.75;color:#3a3a3c;
   margin:0 0 18px;max-width:40em;
 }
+.fun-doc .rd-hero h1{font-size:2rem}
+.fun-list{
+  margin:8px 0 0;padding:0 0 0 1.15em;
+  font-size:15.5px;line-height:1.7;color:#3a3a3c;
+  max-width:36em;
+}
+.fun-list li{margin:0 0 6px}
+.fun-list li::marker{color:#86868b}
 .readme-doc h2{
   font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
   color:#86868b;margin:36px 0 14px;
@@ -556,7 +579,7 @@ h2.app-h{font-size:1.7rem;font-weight:600;letter-spacing:-.03em;margin-bottom:8p
 .rd-file:hover{background:#ececf1}
 .rd-file img{width:36px;height:36px;flex-shrink:0;object-fit:contain}
 .rd-file span{display:flex;flex-direction:column;gap:3px;min-width:0}
-.rd-file b{font-size:15px;font-weight:650}
+.rd-file b{font-size:15px;font-weight:650;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .rd-file i{font-style:normal;font-size:13px;color:#6e6e73;line-height:1.35}
 .rd-contact{display:flex;flex-wrap:wrap;gap:10px;margin-top:6px}
 .rd-contact button{

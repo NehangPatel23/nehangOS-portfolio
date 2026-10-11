@@ -231,7 +231,7 @@
   }
 
   function closeMenus() {
-    document.querySelectorAll('.dropdown,.cc-panel,.cc-scrim,#spotlight,#ctxMenu,#iconCtx,#stickyCtx').forEach(el => { el.hidden = true; });
+    document.querySelectorAll('.dropdown,.cc-panel,.cc-scrim,#spotlight,#ctxMenu,#iconCtx,#stickyCtx,#shotCtx').forEach(el => { el.hidden = true; });
     const ccBtn = document.getElementById('ccBtn');
     if (ccBtn) ccBtn.classList.remove('on');
     closeNook();
@@ -250,7 +250,6 @@
   }
 
   const MUSIC_LIBRARY = [
-    { id:'dhaka', title:'Dhaka', artist:'Kevin MacLeod', album:'Bollywood Mix', genre:'bollywood', src:'assets/music/dhaka.m4a', art:'linear-gradient(145deg,#ff2d55 0%,#ff9f0a 100%)' },
     { id:'eastern', title:'Eastern Thought', artist:'Kevin MacLeod', album:'Bollywood Mix', genre:'bollywood', src:'assets/music/eastern-thought.m4a', art:'linear-gradient(145deg,#bf5af2 0%,#ff375f 100%)' },
     { id:'rites', title:'Rites', artist:'Kevin MacLeod', album:'Bollywood Mix', genre:'bollywood', src:'assets/music/rites.m4a', art:'linear-gradient(145deg,#ff9f0a 0%,#ffd60a 100%)' },
     { id:'carefree', title:'Carefree', artist:'Kevin MacLeod', album:'English Mix', genre:'english', src:'assets/music/carefree.m4a', art:'linear-gradient(145deg,#0a84ff 0%,#64d2ff 100%)' },
@@ -341,6 +340,257 @@
       }
     });
     return photos;
+  }
+  function shotFileName(src) {
+    try {
+      const path = String(src || '').split('?')[0];
+      return decodeURIComponent(path.split('/').pop()) || 'Screenshot.png';
+    } catch {
+      return 'Screenshot.png';
+    }
+  }
+  function isShotFile(file) {
+    return String(file || '').startsWith('shot:');
+  }
+  const DESK_DOODLE = {
+    id: 'desk-doodle',
+    file: 'shot:desk:doodle',
+    src: 'assets/readme/desktop-doodle.jpg',
+    name: 'Screenshot 2026-08-01 at 1.11.11 AM.png',
+    cap: 'Portfolio desktop energy — stickies, dock, vibes.',
+    alt: 'NehangOS desktop doodle',
+    kind: 'PNG Image',
+    icon: 'photos',
+    size: '840 KB',
+    project: null,
+    album: 'desk'
+  };
+  function shotsForProject(p) {
+    if (!p) return [];
+    const s = studyOf(p);
+    return (s?.images || []).map((im, i) => ({
+      id: p.id + '-' + i,
+      file: 'shot:' + p.id + ':' + i,
+      project: p.id,
+      projectTitle: p.title,
+      index: i,
+      src: im.src,
+      cap: im.cap || im.alt || p.title,
+      alt: im.alt || im.cap || p.title,
+      name: shotFileName(im.src),
+      kind: 'PNG Image',
+      icon: 'photos',
+      size: '—'
+    }));
+  }
+  function shotByFile(file) {
+    if (!isShotFile(file)) return null;
+    const parts = String(file).split(':');
+    if (parts[1] === 'desk' && parts[2] === 'doodle') return { ...DESK_DOODLE };
+    const pid = parts[1];
+    const idx = parseInt(parts[2], 10);
+    const p = PROJECTS.find(x => x.id === pid);
+    return shotsForProject(p)[idx] || null;
+  }
+  function shotSetFor(shot) {
+    if (!shot) return [];
+    const p = PROJECTS.find(x => x.id === shot.project);
+    const set = shotsForProject(p);
+    return set.length ? set : [shot];
+  }
+  function galleryImgClass(src) {
+    const s = String(src || '');
+    const contain = /\/fintrackr\//.test(s) || /architecture\.png/i.test(s);
+    const diagram = /architecture\.png/i.test(s);
+    return (contain ? ' contain' : '') + (diagram ? ' diagram' : '');
+  }
+
+  let qlState = { items: [], i: 0 };
+  let previewShotState = { items: [], i: 0 };
+  let ctxShot = null;
+
+  function motionOk() {
+    return !prefs.reduceMotion && !window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  }
+  function qlOpen() {
+    const el = document.getElementById('quickLook');
+    return !!(el && (!el.hidden || el.dataset.closing === '1'));
+  }
+  function paintQuickLook() {
+    const items = qlState.items || [];
+    const shot = items[qlState.i];
+    const img = document.getElementById('qlImg');
+    const cap = document.getElementById('qlCap');
+    const name = document.getElementById('qlName');
+    const count = document.getElementById('qlCount');
+    const prev = document.querySelector('#quickLook [data-ql="prev"]');
+    const next = document.querySelector('#quickLook [data-ql="next"]');
+    if (!shot || !img) return;
+    img.src = shot.src;
+    img.alt = shot.alt || shot.name;
+    if (cap) cap.textContent = shot.cap || '';
+    if (name) name.textContent = shot.name || 'Quick Look';
+    if (count) count.textContent = items.length ? (qlState.i + 1) + ' of ' + items.length : '';
+    if (prev) prev.hidden = items.length < 2;
+    if (next) next.hidden = items.length < 2;
+  }
+  function closeQuickLook() {
+    const wrap = document.getElementById('quickLook');
+    if (!wrap || wrap.hidden || wrap.dataset.closing === '1') return;
+    wrap.dataset.closing = '1';
+    wrap.classList.remove('on');
+    const hide = () => {
+      wrap.hidden = true;
+      delete wrap.dataset.closing;
+    };
+    if (motionOk()) setTimeout(hide, 160);
+    else hide();
+  }
+  function openQuickLook(items, index) {
+    const list = (items || []).filter(s => s && s.src);
+    if (!list.length) return;
+    qlState.items = list;
+    qlState.i = Math.max(0, Math.min(index || 0, list.length - 1));
+    const wrap = document.getElementById('quickLook');
+    if (!wrap) return;
+    closeMenus();
+    delete wrap.dataset.closing;
+    paintQuickLook();
+    wrap.hidden = false;
+    requestAnimationFrame(() => wrap.classList.add('on'));
+  }
+  function stepQuickLook(dir) {
+    const n = qlState.items.length;
+    if (n < 2) return;
+    qlState.i = (qlState.i + dir + n) % n;
+    paintQuickLook();
+  }
+  function openQuickLookFromShot(shot) {
+    const set = shotSetFor(shot);
+    const i = Math.max(0, set.findIndex(s => s.file === shot.file || s.id === shot.id));
+    openQuickLook(set, i < 0 ? 0 : i);
+  }
+  function currentQlShot() {
+    return qlState.items[qlState.i] || null;
+  }
+  function imagePreviewHTML() {
+    return `<div class="preview-app">
+      <div class="pv-toolbar">
+        <div class="pv-left">
+          <span class="pv-file" id="pvShotName"></span>
+        </div>
+        <div class="pv-center">
+          <button type="button" class="pv-btn" data-pv="prev" title="Previous" aria-label="Previous">‹</button>
+          <span class="pv-page" id="pvShotPage">1 / 1</span>
+          <button type="button" class="pv-btn" data-pv="next" title="Next" aria-label="Next">›</button>
+        </div>
+        <div class="pv-right">
+          <button type="button" class="pv-btn" data-pv="ql" title="Quick Look" aria-label="Quick Look">QL</button>
+        </div>
+      </div>
+      <div class="pv-stage pv-img-stage">
+        <img id="pvShotImg" alt=""/>
+        <p class="pv-img-cap" id="pvShotCap"></p>
+      </div>
+    </div>`;
+  }
+  function paintImagePreview(win) {
+    const items = previewShotState.items || [];
+    const shot = items[previewShotState.i];
+    if (!win || !shot) return;
+    const title = win.querySelector('.wtitle');
+    if (title) title.textContent = shot.name;
+    const rec = state.windows.get(win.dataset.id);
+    if (rec) rec.title = shot.name;
+    if (state.front === win.dataset.id) setMenuApp('Preview');
+    const name = win.querySelector('#pvShotName');
+    const page = win.querySelector('#pvShotPage');
+    const img = win.querySelector('#pvShotImg');
+    const cap = win.querySelector('#pvShotCap');
+    if (name) name.textContent = shot.name;
+    if (page) page.textContent = (previewShotState.i + 1) + ' / ' + items.length;
+    if (img) { img.src = shot.src; img.alt = shot.alt || shot.name; }
+    if (cap) cap.textContent = shot.cap || '';
+  }
+  function bindImagePreview(win) {
+    paintImagePreview(win);
+    win.querySelector('.pv-toolbar')?.addEventListener('click', e => {
+      const btn = e.target.closest('[data-pv]');
+      if (!btn) return;
+      const act = btn.dataset.pv;
+      const n = previewShotState.items.length;
+      if (act === 'prev' && n) {
+        previewShotState.i = (previewShotState.i - 1 + n) % n;
+        paintImagePreview(win);
+      }
+      if (act === 'next' && n) {
+        previewShotState.i = (previewShotState.i + 1) % n;
+        paintImagePreview(win);
+      }
+      if (act === 'ql') {
+        const shot = previewShotState.items[previewShotState.i];
+        if (shot) openQuickLookFromShot(shot);
+      }
+    });
+  }
+  function openImagePreview(items, index) {
+    const list = (items || []).filter(s => s && s.src);
+    if (!list.length) return;
+    previewShotState.items = list;
+    previewShotState.i = Math.max(0, Math.min(index || 0, list.length - 1));
+    closeQuickLook();
+    if (state.windows.has('preview-shot')) {
+      const win = state.windows.get('preview-shot').el;
+      paintImagePreview(win);
+      focusWin('preview-shot');
+      bounceDock('resume');
+      return;
+    }
+    const shot = list[previewShotState.i];
+    makeWindow('preview-shot', shot.name, imagePreviewHTML(), { w: 860, h: 640, kind: 'preview', dock: 'resume' });
+  }
+  function openImagePreviewFromShot(shot) {
+    const set = shotSetFor(shot);
+    const i = Math.max(0, set.findIndex(s => s.file === shot.file || s.id === shot.id));
+    openImagePreview(set, i < 0 ? 0 : i);
+  }
+  function showShotInPhotos(shot) {
+    if (!shot) return;
+    photosSel = shot.id;
+    photosAlbum = shot.project || 'library';
+    closeQuickLook();
+    openApp('photos');
+    document.querySelector('.window[data-id="photos"]')?.dispatchEvent(new Event('photos-refresh'));
+  }
+  async function copyShotImage(shot) {
+    if (!shot?.src) return;
+    const abs = (() => { try { return new URL(shot.src, location.href).href; } catch { return shot.src; } })();
+    try {
+      const res = await fetch(abs);
+      const blob = await res.blob();
+      const type = blob.type || 'image/png';
+      if (navigator.clipboard?.write && window.ClipboardItem) {
+        await navigator.clipboard.write([new ClipboardItem({ [type]: blob })]);
+        toast('Copied');
+        return;
+      }
+    } catch (_) {}
+    try {
+      await navigator.clipboard.writeText(abs);
+      toast('Copied image address');
+    } catch {
+      toast('Couldn’t copy image');
+    }
+  }
+  function showShotCtx(x, y, shot, extra) {
+    closeMenus();
+    ctxShot = shot;
+    ctxFile = extra || null;
+    const m = document.getElementById('shotCtx');
+    if (!m || !shot) return;
+    m.hidden = false;
+    m.style.left = Math.min(x, window.innerWidth - 220) + 'px';
+    m.style.top = Math.min(y, window.innerHeight - 120) + 'px';
   }
   function photosInAlbum(album) {
     const all = photoLibrary();
@@ -715,7 +965,7 @@
       id: key,
       name: meta.name,
       open: meta.file && !String(meta.file).startsWith('restored-') ? meta.file : undefined,
-      icon: trayIconPath(meta.icon || (meta.folder ? 'folder' : 'textedit'))
+      icon: meta.src || trayIconPath(meta.icon || (meta.folder ? 'folder' : 'textedit'))
     });
     openNook();
     showNookTab('tray');
@@ -738,6 +988,121 @@
   function clearFileDragHover() {
     setTrashHot(false);
     setTrayHot(false);
+  }
+  function pointerOverDesktop(x, y) {
+    const nodes = document.elementsFromPoint(x, y) || [];
+    for (const n of nodes) {
+      if (!n?.closest) continue;
+      if (n.closest('.window, .dock, .menubar, .notch, #notchIsland, #nookScrim, #quickLook, .ctx, [data-open="trash"]')) return false;
+    }
+    const hit = document.elementFromPoint(x, y);
+    return !!(hit && hit.closest('.stage, #desktop'));
+  }
+  function placeShotOnDesk(meta, clientX, clientY) {
+    if (!meta?.src) return;
+    const file = meta.file || ('shot-drop-' + Date.now());
+    const existing = [...document.querySelectorAll('.dicon[data-file]:not([hidden])')].find(el => el.dataset.file === file);
+    if (existing) {
+      toast('Already on Desktop');
+      return;
+    }
+    const stage = document.querySelector('.stage');
+    if (!stage) return;
+    const sr = stage.getBoundingClientRect();
+    const btn = document.createElement('button');
+    btn.className = 'dicon';
+    btn.dataset.deskId = 'desk-' + file.replace(/[:/]/g, '-');
+    btn.dataset.file = file;
+    if (meta.src) btn.dataset.shotSrc = meta.src;
+    btn.innerHTML = `<img class="appico shot-thumb" src="${esc(meta.src)}" alt="" draggable="false"/><span>${esc(meta.name)}</span>`;
+    stage.appendChild(btn);
+    floatOnStage(btn, clientX - sr.left - 40, clientY - sr.top - 36);
+    saveDeskLayout();
+    rememberPlacedShot({ file, deskId: btn.dataset.deskId, name: meta.name, src: meta.src });
+    toast('Placed on Desktop');
+  }
+  function loadPlacedShots() {
+    try {
+      const raw = JSON.parse(localStorage.getItem('nehang-desk-shots') || '[]');
+      return Array.isArray(raw) ? raw : [];
+    } catch { return []; }
+  }
+  function savePlacedShots(list) {
+    try { localStorage.setItem('nehang-desk-shots', JSON.stringify(list)); } catch (_) {}
+  }
+  function rememberPlacedShot(item) {
+    const list = loadPlacedShots().filter(x => x.file !== item.file && x.deskId !== item.deskId);
+    list.push(item);
+    savePlacedShots(list);
+  }
+  function restorePlacedShots() {
+    const stage = document.querySelector('.stage');
+    if (!stage) return;
+    loadPlacedShots().forEach(it => {
+      if (!it?.file || !it.src) return;
+      if ([...document.querySelectorAll('.dicon')].some(el => el.dataset.deskId === it.deskId || el.dataset.file === it.file)) return;
+      const btn = document.createElement('button');
+      btn.className = 'dicon';
+      btn.dataset.deskId = it.deskId || ('desk-' + String(it.file).replace(/[:/]/g, '-'));
+      btn.dataset.file = it.file;
+      btn.dataset.shotSrc = it.src;
+      btn.innerHTML = `<img class="appico shot-thumb" src="${esc(it.src)}" alt="" draggable="false"/><span>${esc(it.name || shotFileName(it.src))}</span>`;
+      stage.appendChild(btn);
+    });
+  }
+  function trackFileDrag(ev, meta, sourceEl) {
+    if (ev.button !== 0 || !meta) return;
+    const startX = ev.clientX, startY = ev.clientY;
+    let moved = false;
+    let ghost = null;
+    function move(e2) {
+      if (!moved && Math.hypot(e2.clientX - startX, e2.clientY - startY) < 6) return;
+      if (!moved) {
+        moved = true;
+        ghost = document.createElement('div');
+        ghost.className = 'file-ghost';
+        const pic = sourceEl.querySelector('.appico, .ico, img');
+        const icon = meta.src
+          ? `<img class="appico fthumb" src="${esc(meta.src)}" alt="" draggable="false"/>`
+          : (pic ? pic.outerHTML : ico(meta.icon || 'photos'));
+        ghost.innerHTML = icon + '<span>' + esc(meta.name) + '</span>';
+        document.body.appendChild(ghost);
+      }
+      ghost.style.left = (e2.clientX - 32) + 'px';
+      ghost.style.top = (e2.clientY - 24) + 'px';
+      fileDragHover(e2.clientX, e2.clientY);
+    }
+    function up(e2) {
+      document.removeEventListener('mousemove', move);
+      document.removeEventListener('mouseup', up);
+      ghost?.remove();
+      const hover = moved ? fileDragHover(e2.clientX, e2.clientY) : { trash: null, tray: null };
+      clearFileDragHover();
+      if (!moved) return;
+      sourceEl._dragged = true;
+      const swallow = e => { e.preventDefault(); e.stopPropagation(); sourceEl.removeEventListener('click', swallow, true); };
+      sourceEl.addEventListener('click', swallow, true);
+      setTimeout(() => { sourceEl._dragged = false; }, 0);
+      const canTrash = meta.from === 'Desktop' || !!meta.deskEl;
+      if (hover.trash) {
+        if (canTrash) {
+          moveFileToTrash(meta);
+          armIgnoreTrashClick();
+        } else if (isShotFile(meta.file)) {
+          toast('Screenshots stay in Projects');
+        } else {
+          moveFileToTrash(meta);
+          armIgnoreTrashClick();
+        }
+      } else if (hover.tray) {
+        addToNookTray(meta);
+        armIgnoreNookClick();
+      } else if (meta.src && pointerOverDesktop(e2.clientX, e2.clientY)) {
+        placeShotOnDesk(meta, e2.clientX, e2.clientY);
+      }
+    }
+    document.addEventListener('mousemove', move);
+    document.addEventListener('mouseup', up);
   }
   function showNookTab(name) {
     document.querySelectorAll('[data-nook-page]').forEach(p => {
@@ -925,7 +1290,8 @@
     setMenuApp(w.title.split(' — ')[0].split(' · ')[0]);
     document.querySelectorAll('.dapp').forEach(d => {
       const isSaf = id === 'safari' && (d.dataset.open === 'safari' || d.dataset.safari);
-      d.classList.toggle('open', d.dataset.open === id || isSaf && d.dataset.open === 'safari');
+      const isPrev = id === 'preview-shot' && d.dataset.open === 'resume';
+      d.classList.toggle('open', d.dataset.open === id || isSaf && d.dataset.open === 'safari' || isPrev);
     });
     const safBtn = document.querySelector('.dapp[data-open="safari"]');
     if (safBtn) safBtn.classList.toggle('open', id === 'safari' || [...state.windows.keys()].some(k => k === 'safari'));
@@ -940,6 +1306,9 @@
     document.querySelectorAll('.dapp').forEach(d => {
       if (d.dataset.open === id) d.classList.remove('open');
     });
+    if (id === 'preview-shot' && !state.windows.has('resume')) {
+      document.querySelector('.dapp[data-open="resume"]')?.classList.remove('open');
+    }
   }
 
   function minWin(id) {
@@ -989,6 +1358,7 @@
     if (id === 'messages') bindMessages(el);
     if (id === 'finder' || id === 'trash') bindFinder(el, id === 'trash' ? 'Trash' : 'Desktop');
     if (id === 'resume') bindPreview(el);
+    if (id === 'preview-shot') bindImagePreview(el);
     if (id === 'calendar') bindCalendar(el);
     if (id === 'education') bindEducation(el);
     if (id === 'experience') bindExperience(el);
@@ -2262,7 +2632,7 @@
           <div class="am-now">
             <span class="am-now-art" aria-hidden="true"></span>
             <span class="am-now-txt">
-              <strong class="am-now-title">Dhaka</strong>
+              <strong class="am-now-title">Eastern Thought</strong>
               <em class="am-now-artist">Kevin MacLeod</em>
             </span>
           </div>
@@ -2299,13 +2669,13 @@
           <div class="am-main">
             <header class="am-head">
               <h2 class="am-heading">Listen Now</h2>
-              <p class="am-sub">7 songs · Bollywood &amp; English</p>
+              <p class="am-sub">6 songs · Bollywood &amp; English</p>
             </header>
             <div class="am-hero">
               <div class="am-cover" aria-hidden="true"></div>
               <div class="am-hero-txt">
                 <span class="am-badge">Bollywood</span>
-                <h3 class="am-hero-title">Dhaka</h3>
+                <h3 class="am-hero-title">Eastern Thought</h3>
                 <p class="am-hero-meta">Kevin MacLeod · Bollywood Mix</p>
                 <button type="button" class="am-hero-play am-play" data-am="play"><span class="am-play-lab">Play</span><span class="am-pause-lab">Pause</span></button>
               </div>
@@ -2395,6 +2765,10 @@
             <img src="assets/icons/macos/textedit.png" alt="" draggable="false"/>
             <span><b>Stack.md</b><i>Languages, tools, and how I work</i></span>
           </button>
+          <button type="button" class="rd-file" data-open="secrets">
+            <img src="assets/icons/macos/folder.png" alt="" draggable="false"/>
+            <span><b>Secrets</b><i>passwords.txt and other theater</i></span>
+          </button>
         </div>
         <h2>Right now</h2>
         <p class="rd-body">MS CS at USC Viterbi. President of GRIDS @ USC since May 2026. Looking for internships and new-grad software engineering roles.</p>
@@ -2441,6 +2815,55 @@
             <h2>Spoken</h2>
             ${tags(STACK.spoken)}
           </section>
+        </div>
+      </div>`;
+    },
+    secrets() {
+      return `<div class="readme-doc fun-doc">
+        <p class="rd-kicker">Secrets</p>
+        <header class="rd-hero">
+          <h1>Secrets</h1>
+          <p class="rd-role">Not actually secret</p>
+          <p class="rd-meta">A folder for things that feel too unserious for the top row.</p>
+        </header>
+        <p class="rd-body">Double-click anything. None of these are real credentials. One of them is a cry for help disguised as a password list.</p>
+        <div class="rd-files">
+          <button type="button" class="rd-file" data-open="passwords">
+            <img src="assets/icons/macos/textedit.png" alt="" draggable="false"/>
+            <span><b>passwords.txt</b><i>Theatrical · do not try these</i></span>
+          </button>
+          <button type="button" class="rd-file" data-open="names">
+            <img src="assets/icons/macos/textedit.png" alt="" draggable="false"/>
+            <span><b>bad-startup-names.txt</b><i>Also living in Trash, emotionally</i></span>
+          </button>
+          <button type="button" class="rd-file" data-open="cover">
+            <img src="assets/icons/macos/document.png" alt="" draggable="false"/>
+            <span><b>Cover Letter v7 FINAL.docx</b><i>Deprecated. Open Mail instead.</i></span>
+          </button>
+          <button type="button" class="rd-file" data-open="donotopen">
+            <img src="assets/icons/macos/textedit.png" alt="" draggable="false"/>
+            <span><b>do-not-open.txt</b><i>You already know how this ends</i></span>
+          </button>
+          <button type="button" class="rd-file" data-open="commits">
+            <img src="assets/icons/macos/textedit.png" alt="" draggable="false"/>
+            <span><b>commit-messages.txt</b><i>A hall of shame</i></span>
+          </button>
+          <button type="button" class="rd-file" data-open="meeting">
+            <img src="assets/icons/macos/textedit.png" alt="" draggable="false"/>
+            <span><b>meeting-notes.txt</b><i>This could have been a sticky</i></span>
+          </button>
+          <button type="button" class="rd-file" data-open="interview">
+            <img src="assets/icons/macos/textedit.png" alt="" draggable="false"/>
+            <span><b>interview-answers-DONT-SEND.txt</b><i>Draft energy only</i></span>
+          </button>
+          <button type="button" class="rd-file" data-open="socks">
+            <img src="assets/icons/macos/textedit.png" alt="" draggable="false"/>
+            <span><b>matching-socks.log</b><i>Boot WARN, still open</i></span>
+          </button>
+          <button type="button" class="rd-file" data-open="why">
+            <img src="assets/icons/macos/textedit.png" alt="" draggable="false"/>
+            <span><b>why-i-built-this.md</b><i>The origin story, unsorted</i></span>
+          </button>
         </div>
       </div>`;
     },
@@ -2572,14 +2995,18 @@
     });
   }
 
-  function studySectionHTML(sec, s) {
+  function studySectionHTML(sec, s, p) {
     const bits = [];
     (sec.paras || []).forEach(t => bits.push(`<p>${esc(t)}</p>`));
     if (sec.id === 'visual-proof' && s.imageNote) {
       bits.push(`<p class="csos-illus">${esc(s.imageNote)}</p>`);
     }
     if (sec.id === 'visual-proof' && s.images?.length) {
-      bits.push(`<div class="csos-gallery">${s.images.map(im => `<figure><img src="${esc(im.src)}" alt="${esc(im.alt)}" loading="lazy"/><figcaption>${esc(im.cap)}</figcaption></figure>`).join('')}</div>`);
+      const pid = p?.id || '';
+      bits.push(`<div class="csos-gallery">${s.images.map((im, i) => `<figure class="csos-shot${galleryImgClass(im.src)}" tabindex="0" data-shot-project="${esc(pid)}" data-shot="${i}">
+        <img src="${esc(im.src)}" alt="${esc(im.alt)}" loading="lazy" draggable="false"/>
+        <figcaption>${esc(im.cap)}</figcaption>
+      </figure>`).join('')}</div>`);
     }
     if (sec.quote) bits.push(`<blockquote class="csos-quote">${esc(sec.quote)}</blockquote>`);
     if (sec.glance?.length) {
@@ -2726,7 +3153,7 @@
         ${sections.map(sec => `<section class="csos-sec" id="csos-${sec.id}" data-csos-sec="${sec.id}">
           <p class="csos-lab">${esc(sec.label || '')}</p>
           <h3>${esc(sec.title || '')}</h3>
-          ${studySectionHTML(sec, s)}
+          ${studySectionHTML(sec, s, p)}
         </section>`).join('')}
       </div>
     </div>`;
@@ -2806,6 +3233,58 @@
       show(btn.dataset.csos);
     });
     bindDemoEmbed(win);
+    function shotFromFigure(fig) {
+      const p = PROJECTS.find(x => x.id === fig.dataset.shotProject);
+      const shots = shotsForProject(p);
+      return shots[+fig.dataset.shot] || null;
+    }
+    function selectFigure(fig) {
+      win.querySelectorAll('.csos-shot').forEach(f => f.classList.toggle('sel', f === fig));
+      fig?.focus({ preventScroll: true });
+    }
+    win.addEventListener('click', e => {
+      const fig = e.target.closest('.csos-shot');
+      if (!fig || !win.contains(fig) || fig._dragged) return;
+      const shot = shotFromFigure(fig);
+      if (!shot) return;
+      selectFigure(fig);
+      openQuickLookFromShot(shot);
+    });
+    win.addEventListener('keydown', e => {
+      const fig = e.target.closest('.csos-shot');
+      if (!fig || !win.contains(fig)) return;
+      if (e.key === ' ' || e.code === 'Space' || e.key === 'Enter') {
+        e.preventDefault();
+        const shot = shotFromFigure(fig);
+        if (shot) {
+          selectFigure(fig);
+          openQuickLookFromShot(shot);
+        }
+      }
+      if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+        const figs = [...win.querySelectorAll('.csos-shot')];
+        const i = figs.indexOf(fig);
+        const next = figs[i + (e.key === 'ArrowRight' ? 1 : -1)];
+        if (next) { e.preventDefault(); selectFigure(next); }
+      }
+    });
+    win.addEventListener('contextmenu', e => {
+      const fig = e.target.closest('.csos-shot');
+      if (!fig || !win.contains(fig)) return;
+      e.preventDefault();
+      e.stopPropagation();
+      const shot = shotFromFigure(fig);
+      if (!shot) return;
+      selectFigure(fig);
+      showShotCtx(e.clientX, e.clientY, shot);
+    });
+    win.addEventListener('mousedown', e => {
+      const fig = e.target.closest('.csos-shot');
+      if (!fig || !win.contains(fig) || e.button !== 0) return;
+      const shot = shotFromFigure(fig);
+      if (!shot) return;
+      trackFileDrag(e, { ...shot, from: 'Gallery' }, fig);
+    });
     if (!main || !navs.length) return;
     const secs = [...win.querySelectorAll('[data-csos-sec]')];
     const sync = () => {
@@ -2819,16 +3298,53 @@
     main.addEventListener('scroll', sync, { passive: true });
   }
 
+  function openFunDoc(docId) {
+    if (!FUN_DOCS[docId]) return false;
+    const winId = 'fun-' + docId;
+    if (state.windows.has(winId)) {
+      focusWin(winId);
+      return true;
+    }
+    const doc = FUN_DOCS[docId];
+    makeWindow(winId, doc.title, funDocHTML(docId), { w: 560, h: 520, kind: 'textedit', dock: 'notes' });
+    return true;
+  }
+  function openTrashGag(rid) {
+    const target = TRASH_OPEN[rid];
+    if (!target) return false;
+    if (FUN_DOCS[target]) return openFunDoc(target);
+    openApp(target);
+    return true;
+  }
   function openApp(id) {
     closeMenus();
     closeLaunchpad();
     if (id === 'spotlight') return openSpotlight();
     if (id === 'launchpad') return toggleLaunchpad();
     if (id === 'safari') return openSafari();
+    if (id === 'mail-alias') return openApp('contact');
+    if (isShotFile(id)) {
+      const shot = shotByFile(id);
+      if (shot) openImagePreviewFromShot(shot);
+      return;
+    }
+    if (String(id).startsWith('pfolder:')) {
+      openApp('finder');
+      document.querySelector('.window.finder')?.dispatchEvent(new CustomEvent('finder-go', { detail: { loc: 'Projects', project: String(id).slice(8) } }));
+      return;
+    }
     if (String(id).startsWith('restored-')) {
       const rid = String(id).slice(9);
+      if (openTrashGag(rid)) return;
       const it = restoredItems.find(x => x.id === rid) || TRASH_SEED.find(x => x.id === rid);
       toast(it ? it.name : 'Restored from Trash');
+      return;
+    }
+    if (String(id).startsWith('fun-')) {
+      if (openFunDoc(String(id).slice(4))) return;
+    }
+    if (FUN_DOCS[id]) {
+      openFunDoc(id);
       return;
     }
     if (id === 'about') id = 'notes';
@@ -2854,8 +3370,8 @@
       return;
     }
     if (bodies[id]) {
-      const sizes = { notes:[780,520], projects:[760,560], experience:[940,680], education:[900,640], resume:[840,720], contact:[980,600], messages:[920,580], terminal:[640,380], finder:[780,500], settings:[780,680], 'about-mac':[286,558], trash:[800,520], readme:[800,780], stack:[800,880], calendar:[640,440], music:[840,660], safari:[960,640], photos:[920,640], maps:[960,640], facetime:[860,560], appstore:[880,640], contacts:[780,520] };
-      const kinds = { finder:'finder', trash:'finder', safari:'safari', resume:'preview', stack:'textedit', readme:'textedit', 'about-mac':'aboutmac', contact:'mail', messages:'messages', calendar:'calendar', notes:'notes', settings:'settings', music:'music', education:'education', experience:'experience', photos:'photos', maps:'maps', facetime:'facetime', appstore:'appstore', contacts:'contacts' };
+      const sizes = { notes:[780,520], projects:[760,560], experience:[940,680], education:[900,640], resume:[840,720], contact:[980,600], messages:[920,580], terminal:[640,380], finder:[780,500], settings:[780,680], 'about-mac':[286,558], trash:[800,520], readme:[800,780], stack:[800,880], secrets:[1100,820], calendar:[640,440], music:[840,660], safari:[960,640], photos:[920,640], maps:[960,640], facetime:[860,560], appstore:[880,640], contacts:[780,520] };
+      const kinds = { finder:'finder', trash:'finder', safari:'safari', resume:'preview', stack:'textedit', readme:'textedit', secrets:'textedit', 'about-mac':'aboutmac', contact:'mail', messages:'messages', calendar:'calendar', notes:'notes', settings:'settings', music:'music', education:'education', experience:'experience', photos:'photos', maps:'maps', facetime:'facetime', appstore:'appstore', contacts:'contacts' };
       const [w,h] = sizes[id] || [640,480];
       makeWindow(id, titleFor(id), bodies[id](), { w, h, kind: kinds[id], dock: id === 'notes' ? 'notes' : id });
       return;
@@ -2870,8 +3386,8 @@
 
   function pWrap(p){ return p; }
   function titleFor(id) {
-    const map = { about:'Notes', notes:'Notes', projects:'Projects', experience:'Experience', education:'Education', resume:'Preview', contact:'Mail', messages:'Messages', terminal:'Terminal — zsh', finder:'Finder', readme:'README.md', stack:'Stack.md', settings:'System Settings', 'about-mac':'About This Mac', trash:'Trash', calendar:'Calendar', music:'Music', safari:'Safari', photos:'Photos', maps:'Maps', facetime:'FaceTime', appstore:'App Store', contacts:'Contacts' };
-    return map[id] || id;
+    const map = { about:'Notes', notes:'Notes', projects:'Projects', experience:'Experience', education:'Education', resume:'Preview', contact:'Mail', messages:'Messages', terminal:'Terminal — zsh', finder:'Finder', readme:'README.md', stack:'Stack.md', secrets:'Secrets', settings:'System Settings', 'about-mac':'About This Mac', trash:'Trash', calendar:'Calendar', music:'Music', safari:'Safari', photos:'Photos', maps:'Maps', facetime:'FaceTime', appstore:'App Store', contacts:'Contacts' };
+    return map[id] || FUN_DOCS[id]?.title || id;
   }
 
   /* Safari */
@@ -3276,9 +3792,170 @@
     { name:'Experience', file:'experience', folder:true, icon:'folder', deskId:'icon-experience', kind:'Folder', size:'—' },
     { name:'Education', file:'education', folder:true, icon:'folder', deskId:'icon-education', kind:'Folder', size:'—' },
     { name:'Resume.pdf', file:'resume', icon:'pdf', deskId:'icon-resume', kind:'PDF Document', size:'186 KB' },
+    { name:'Mail.app', file:'mail-alias', icon:'mail', deskId:'icon-mail', kind:'Application', size:'—' },
     { name:'README.md', file:'readme', icon:'textedit', deskId:'icon-readme', kind:'Markdown', size:'12 KB' },
-    { name:'Stack.md', file:'stack', icon:'textedit', deskId:'icon-stack', kind:'Markdown', size:'8 KB' }
+    { name:'Stack.md', file:'stack', icon:'textedit', deskId:'icon-stack', kind:'Markdown', size:'8 KB' },
+    { name:'Secrets', file:'secrets', folder:true, icon:'folder', deskId:'icon-secrets', kind:'Folder', size:'—' },
+    { name:'todo.txt', file:'todo', icon:'textedit', deskId:'icon-todo', kind:'Plain Text', size:'1 KB' },
+    { name:'do-not-open.txt', file:'donotopen', icon:'textedit', deskId:'icon-donotopen', kind:'Plain Text', size:'1 KB' },
+    { name: DESK_DOODLE.name, file: DESK_DOODLE.file, icon:'photos', deskId:'icon-doodle', kind:'PNG Image', size: DESK_DOODLE.size, src: DESK_DOODLE.src }
   ];
+  const FUN_DOCS = {
+    todo: {
+      title: 'todo.txt',
+      kicker: 'Plain Text',
+      lead: 'A living document. Updated never.',
+      lines: [
+        '[x] build an entire operating system instead of a portfolio',
+        '[ ] sleep before 2am (carry forward since 2022)',
+        '[ ] stop renaming branches "final-final-v3"',
+        '[ ] reply to that LinkedIn message from three weeks ago',
+        '[ ] teach the dock bounce to respect weekends',
+        '[ ] write a cover letter (deprecated — see Trash)',
+        '[ ] rearrange desktop icons into something intentional'
+      ]
+    },
+    donotopen: {
+      title: 'do-not-open.txt',
+      kicker: 'Plain Text',
+      lead: 'You opened it anyway. Respect.',
+      paras: [
+        'Congratulations. You failed a very easy instruction.',
+        'Contents: one (1) empty threat, zero (0) actual secrets.',
+        'Close this window like nothing happened. I will know.'
+      ]
+    },
+    passwords: {
+      title: 'passwords.txt',
+      kicker: 'Plain Text · theatrical',
+      lead: 'Obviously fake. Please do not try these anywhere.',
+      lines: [
+        'wifi-guest → askRoommate2026',
+        'github → hunter2 (encrypted, allegedly)',
+        'laptop → correct-horse-battery-staple',
+        'nehangos-admin → caffeineM3pro!',
+        'zoom → the meeting id is a state of mind'
+      ]
+    },
+    names: {
+      title: 'bad-startup-names.txt',
+      kicker: 'Plain Text',
+      lead: 'Brainstorm debris. Do not incorporate.',
+      lines: [
+        'Shiply',
+        'Foldr',
+        'InternOS',
+        'RecruiterGPT (too on the nose)',
+        'StickyNote Capital',
+        'NehangAF',
+        'Portfolio as a Service',
+        'yes.com (taken)'
+      ]
+    },
+    untitled: {
+      title: 'Untitled.txt',
+      kicker: 'Plain Text',
+      lead: 'Started at 2:14am. Abandoned at 2:16am.',
+      paras: [
+        'ideas:',
+        '—',
+        '(the cursor blinked at me judgmentally and I closed the window)'
+      ]
+    },
+    cover: {
+      title: 'Cover Letter v7 FINAL.docx',
+      kicker: 'Microsoft Word · emotionally archived',
+      lead: 'Status: superseded by an entire operating system.',
+      paras: [
+        'Dear Hiring Manager,',
+        'I am writing to express my interest in… actually, no. I built NehangOS instead.',
+        'Please open Mail on the desktop. The cover letter has been deprecated in favor of clicking around.',
+        'Sincerely,<br>Nehang Patel<br><em>v7 FINAL FINAL (use this one)</em>'
+      ]
+    },
+    commits: {
+      title: 'commit-messages.txt',
+      kicker: 'Plain Text · do not git blame',
+      lead: 'Recovered from reflog. Emotional damage intact.',
+      lines: [
+        'fix',
+        'fix for real',
+        'okay THIS one',
+        'wip',
+        'asdfasdf',
+        'remove console.log (missed two)',
+        'make dock bounce harder',
+        'revert "make dock bounce harder"',
+        'docs: pretend this was intentional',
+        'chore: move sticky 3px to the left'
+      ]
+    },
+    meeting: {
+      title: 'meeting-notes.txt',
+      kicker: 'Plain Text',
+      lead: 'Standup · RTH · allegedly 25 minutes',
+      lines: [
+        'Attendees: me, future me, the coffee',
+        '— ship Secrets folder before anyone asks for a cover letter',
+        '— decide if the notch is a feature or a cry for help (both)',
+        '— action item: sleep (owner: TBD)',
+        '— parking lot: matching socks',
+        'Next meeting: when the sticky notes revolt'
+      ]
+    },
+    interview: {
+      title: 'interview-answers-DONT-SEND.txt',
+      kicker: 'Plain Text · DRAFT · do not paste',
+      lead: 'If this file leaves Secrets, the timeline splits.',
+      paras: [
+        '<strong>Tell me about yourself.</strong><br>I built a Mac so I wouldn\'t have to write a cover letter. Next question.',
+        '<strong>What\'s your biggest weakness?</strong><br>Dock magnification. Also underestimating CSS.',
+        '<strong>Where do you see yourself in five years?</strong><br>Still rearranging these icons. Hopefully employed.',
+        '<strong>Why should we hire you?</strong><br>Open Mail.app. It actually sends. That\'s the pitch.'
+      ]
+    },
+    socks: {
+      title: 'matching-socks.log',
+      kicker: 'System log',
+      lead: 'NehangOS Boot Log · excerpt',
+      lines: [
+        '[  OK  ] sticky notes loaded (slightly crooked)',
+        '[  OK  ] dock magnification armed',
+        '[  OK  ] Eastern Thought queued',
+        '[ WARN ] matching socks not found',
+        '[ WARN ] matching socks not found',
+        '[ WARN ] matching socks not found',
+        '[ FAIL ] gave up. proceeded barefoot spiritually',
+        '[  OK  ] desktop ready'
+      ]
+    },
+    why: {
+      title: 'why-i-built-this.md',
+      kicker: 'Markdown',
+      lead: 'Origin story, unsorted.',
+      paras: [
+        'I got tired of the usual portfolio — hero section, three cards, footer saying "let\'s connect."',
+        'So I built a computer instead. You boot it. You unlock it. You drag windows around like you meant to be productive.',
+        'If you\'re still reading this inside Secrets: you\'re hired. Spiritually. Open Mail for the non-spiritual version.'
+      ]
+    }
+  };
+  function funDocHTML(id) {
+    const doc = FUN_DOCS[id];
+    if (!doc) return '';
+    const paras = (doc.paras || []).map(p => `<p class="rd-body">${p}</p>`).join('');
+    const list = doc.lines
+      ? `<ul class="fun-list">${doc.lines.map(li => `<li>${li}</li>`).join('')}</ul>`
+      : '';
+    return `<div class="readme-doc fun-doc">
+      <p class="rd-kicker">${doc.kicker}</p>
+      <header class="rd-hero">
+        <h1>${doc.title}</h1>
+        <p class="rd-meta">${doc.lead}</p>
+      </header>
+      ${paras}${list}
+    </div>`;
+  }
   const TRASH_SEED = [
     { id:'cover', name:'Cover Letter v7 FINAL.docx', kind:'Microsoft Word', icon:'document', from:'Documents', deleted:'Yesterday', size:'28 KB' },
     { id:'shot', name:'Screenshot 2026-07-12 at 2.14.03 AM.png', kind:'PNG Image', icon:'photos', from:'Desktop', deleted:'Aug 18', size:'1.2 MB' },
@@ -3286,6 +3963,13 @@
     { id:'untitled', name:'Untitled.txt', kind:'Plain Text', icon:'textedit', from:'Desktop', deleted:'Jul 22', size:'1 KB' },
     { id:'names', name:'bad-startup-names.txt', kind:'Plain Text', icon:'textedit', from:'Documents', deleted:'Jul 9', size:'2 KB' }
   ];
+  const TRASH_OPEN = {
+    cover: 'cover',
+    untitled: 'untitled',
+    names: 'names',
+    oldcv: 'resume',
+    shot: 'shot:desk:doodle'
+  };
   function loadTrash() {
     try {
       const v2 = localStorage.getItem('nehang-trash-v2');
@@ -3363,6 +4047,21 @@
   }
   function deskMeta(el) {
     const file = el.dataset.file;
+    if (isShotFile(file) || el.dataset.shotSrc) {
+      const shot = shotByFile(file);
+      return {
+        ...(shot || {}),
+        name: shot?.name || el.querySelector('span')?.textContent?.trim() || file,
+        file,
+        icon: 'photos',
+        src: shot?.src || el.dataset.shotSrc,
+        from: 'Desktop',
+        kind: 'PNG Image',
+        size: shot?.size || '—',
+        deskId: el.dataset.deskId,
+        deskEl: el
+      };
+    }
     const known = DESK_FILES.find(x => x.file === file);
     const name = el.querySelector('span')?.textContent?.trim() || known?.name || file;
     if (el.dataset.restored) {
@@ -3391,8 +4090,28 @@
       deskEl: el
     };
   }
+  function finderItemIcon(it) {
+    if (it.src) return `<img class="appico fthumb" src="${esc(it.src)}" alt="" draggable="false"/>`;
+    return it.folder ? ico('folder') : ico(it.icon || 'textedit');
+  }
   function finderFileMeta(row, loc) {
     const file = row.dataset.file;
+    if (isShotFile(file)) {
+      const shot = shotByFile(file);
+      if (shot) return { ...shot, from: loc || 'Projects', folder: false };
+    }
+    if (String(file).startsWith('pfolder:')) {
+      const p = PROJECTS.find(x => x.id === String(file).slice(8));
+      return {
+        name: p?.title || file,
+        file,
+        folder: true,
+        icon: 'folder',
+        from: loc || 'Projects',
+        kind: 'Folder',
+        size: '—'
+      };
+    }
     const known = DESK_FILES.find(x => x.file === file);
     const name = row.getAttribute('title') || row.querySelector('.fl-name span, span:last-child')?.textContent?.trim() || known?.name || file;
     const folder = row.dataset.folder === '1' || !!known?.folder;
@@ -3420,6 +4139,14 @@
     if (!meta || !meta.file) return;
     if (meta.from === 'Applications') {
       toast('Applications stay in Applications');
+      return;
+    }
+    if (String(meta.file).startsWith('pfolder:')) {
+      toast('Project folders stay in Projects');
+      return;
+    }
+    if (isShotFile(meta.file) && meta.from !== 'Desktop') {
+      toast('Screenshots stay in Projects');
       return;
     }
     if (meta.restoredId) {
@@ -3558,11 +4285,14 @@
       { name:'NexusIQ AI', file:'nexusiq', folder:true },
       { name:'README.md', file:'readme', icon:'textedit' }
     ],
-    Desktop: () => DESK_FILES.map(x => ({ name: x.name, file: x.file, folder: !!x.folder, icon: x.icon })),
+    Desktop: () => DESK_FILES.map(x => ({ name: x.name, file: x.file, folder: !!x.folder, icon: x.icon, src: x.src })),
+    Projects: () => PROJECTS.map(p => ({ name: p.title, file: 'pfolder:' + p.id, folder: true, icon: 'folder' })),
     Documents: () => [
       { name:'Resume.pdf', file:'resume', icon:'pdf' },
       { name:'README.md', file:'readme', icon:'textedit' },
       { name:'Stack.md', file:'stack', icon:'textedit' },
+      { name:'passwords.txt', file:'passwords', icon:'textedit' },
+      { name:'todo.txt', file:'todo', icon:'textedit' },
       ...PROJECTS.map(p => ({ name: p.title, file: p.id, folder: true }))
     ],
     Applications: () => [
@@ -3594,12 +4324,14 @@
     let loc = start && FINDER_LOCS[start] ? start : 'Desktop';
     let view = loc === 'Trash' ? 'list' : 'icons';
     let sel = null;
+    let nest = null;
     const hist = [loc];
     let hi = 0;
 
     function go(next, fromHist) {
       if (!FINDER_LOCS[next]) return;
       loc = next;
+      nest = null;
       if (!fromHist) {
         hist.splice(hi + 1);
         hist.push(loc);
@@ -3609,8 +4341,23 @@
       if (loc === 'Trash') view = view || 'list';
       paint();
     }
+    function enterProject(pid) {
+      const p = PROJECTS.find(x => x.id === pid);
+      if (!p) return;
+      loc = 'Projects';
+      nest = { id: p.id, title: p.title };
+      sel = null;
+      paint();
+    }
+    function itemsFor() {
+      if (loc === 'Projects' && nest) {
+        const p = PROJECTS.find(x => x.id === nest.id);
+        return shotsForProject(p);
+      }
+      return locItems(loc);
+    }
     function paint() {
-      const title = loc === 'Trash' ? 'Trash' : loc;
+      const title = nest?.title || (loc === 'Trash' ? 'Trash' : loc);
       const tEl = win.querySelector('.wtitle');
       if (tEl) tEl.textContent = title;
       const w = state.windows.get(win.dataset.id);
@@ -3621,7 +4368,7 @@
         return `<button type="button" data-loc="${n}" class="${n === loc ? 'on' : ''}${n === 'Trash' ? ' f-trash' : ''}">${n}</button>`;
       }).join('');
 
-      const items = locItems(loc);
+      const items = itemsFor();
       const inTrash = loc === 'Trash';
       const empty = win.querySelector('[data-finder="empty"]');
       const put = win.querySelector('[data-finder="putback"]');
@@ -3632,7 +4379,7 @@
         put.classList.toggle('off', !inTrash || !sel);
         put.setAttribute('aria-disabled', (!inTrash || !sel) ? 'true' : 'false');
       }
-      if (back) back.disabled = hi <= 0;
+      if (back) back.disabled = hi <= 0 && !nest;
       if (fwd) fwd.disabled = hi >= hist.length - 1;
       win.querySelector('[data-finder="view-icons"]')?.classList.toggle('on', view === 'icons');
       win.querySelector('[data-finder="view-list"]')?.classList.toggle('on', view === 'list');
@@ -3654,25 +4401,25 @@
           ? `<div class="flist-hd"><span>Name</span><span>Date Deleted</span><span>Size</span><span>Kind</span></div>`
           : `<div class="flist-hd"><span>Name</span><span></span><span></span><span>Kind</span></div>`;
         main.innerHTML = head + items.map(it => {
-          const ic = it.folder ? ico('folder') : ico(it.icon || 'textedit');
+          const ic = finderItemIcon(it);
           if (it.trash) {
             return `<button type="button" class="flist-row${it.id === sel ? ' on' : ''}" data-trash="${it.id}">
               <span class="fl-name">${ic}<span>${esc(it.name)}</span></span>
               <span>${esc(it.deleted)}</span><span>${esc(it.size)}</span><span>${esc(it.kind)}</span>
             </button>`;
           }
-          return `<button type="button" class="flist-row${it.file === sel ? ' on' : ''}" data-file="${it.file}" data-folder="${it.folder ? '1' : ''}">
+          return `<button type="button" class="flist-row${it.file === sel ? ' on' : ''}" data-file="${esc(it.file)}" data-folder="${it.folder ? '1' : ''}">
             <span class="fl-name">${ic}<span>${esc(it.name)}</span></span>
-            <span></span><span></span><span>${it.folder ? 'Folder' : ''}</span>
+            <span></span><span></span><span>${it.folder ? 'Folder' : esc(it.kind || '')}</span>
           </button>`;
         }).join('');
       } else {
         main.innerHTML = items.map(it => {
-          const ic = it.folder ? ico('folder') : ico(it.icon || 'textedit');
+          const ic = finderItemIcon(it);
           if (it.trash) {
             return `<button type="button" class="fitem${it.id === sel ? ' on' : ''}" data-trash="${it.id}" title="${esc(it.name)}">${ic}<span>${esc(it.name)}</span></button>`;
           }
-          return `<button type="button" class="fitem${it.file === sel ? ' on' : ''}" data-file="${it.file}" data-folder="${it.folder ? '1' : ''}" title="${esc(it.name)}">${ic}<span>${esc(it.name)}</span></button>`;
+          return `<button type="button" class="fitem${it.file === sel ? ' on' : ''}" data-file="${esc(it.file)}" data-folder="${it.folder ? '1' : ''}" title="${esc(it.name)}">${ic}<span>${esc(it.name)}</span></button>`;
         }).join('');
       }
       if (status) {
@@ -3700,6 +4447,16 @@
     }
     paint();
     win.addEventListener('finder-refresh', paint);
+    win.addEventListener('finder-go', e => {
+      const next = e.detail?.loc;
+      const project = e.detail?.project;
+      if (next) go(next);
+      if (project) enterProject(project);
+    });
+    win.addEventListener('finder-ql', () => {
+      const meta = selectedFinderFile();
+      if (isShotFile(meta?.file)) openQuickLookFromShot(shotByFile(meta.file));
+    });
     win.addEventListener('finder-trash-sel', () => {
       const meta = selectedFinderFile();
       if (meta) moveFileToTrash(meta);
@@ -3735,58 +4492,35 @@
       if (trashRow) {
         e.preventDefault();
         e.stopPropagation();
-        restore(trashRow.dataset.trash);
+        const tid = trashRow.dataset.trash;
+        if (TRASH_OPEN[tid]) {
+          openTrashGag(tid);
+          return;
+        }
+        restore(tid);
         return;
       }
       const fileRow = e.target.closest('[data-file]');
       if (fileRow) {
         e.preventDefault();
         e.stopPropagation();
-        openApp(fileRow.dataset.file);
+        const file = fileRow.dataset.file;
+        if (String(file).startsWith('pfolder:')) {
+          enterProject(String(file).slice(8));
+          return;
+        }
+        if (isShotFile(file)) {
+          openImagePreviewFromShot(shotByFile(file));
+          return;
+        }
+        openApp(file);
       }
     });
     main.addEventListener('mousedown', ev => {
       if (ev.button !== 0) return;
       const row = ev.target.closest('[data-file]');
       if (!row || loc === 'Trash' || loc === 'Applications') return;
-      const startX = ev.clientX, startY = ev.clientY;
-      let moved = false;
-      let ghost = null;
-      const meta = finderFileMeta(row, loc);
-      function move(e2) {
-        if (!moved && Math.hypot(e2.clientX - startX, e2.clientY - startY) < 6) return;
-        if (!moved) {
-          moved = true;
-          ghost = document.createElement('div');
-          ghost.className = 'file-ghost';
-          const pic = row.querySelector('.appico, .ico');
-          ghost.innerHTML = (pic ? pic.outerHTML : ico(meta.icon)) + '<span>' + esc(meta.name) + '</span>';
-          document.body.appendChild(ghost);
-        }
-        ghost.style.left = (e2.clientX - 32) + 'px';
-        ghost.style.top = (e2.clientY - 24) + 'px';
-        fileDragHover(e2.clientX, e2.clientY);
-      }
-      function up(e2) {
-        document.removeEventListener('mousemove', move);
-        document.removeEventListener('mouseup', up);
-        ghost?.remove();
-        const hover = moved ? fileDragHover(e2.clientX, e2.clientY) : { trash: null, tray: null };
-        clearFileDragHover();
-        if (hover.trash) {
-          moveFileToTrash(meta);
-          armIgnoreTrashClick();
-          const swallow = e => { e.preventDefault(); e.stopPropagation(); row.removeEventListener('click', swallow, true); };
-          row.addEventListener('click', swallow, true);
-        } else if (hover.tray) {
-          addToNookTray(meta);
-          armIgnoreNookClick();
-          const swallow = e => { e.preventDefault(); e.stopPropagation(); row.removeEventListener('click', swallow, true); };
-          row.addEventListener('click', swallow, true);
-        }
-      }
-      document.addEventListener('mousemove', move);
-      document.addEventListener('mouseup', up);
+      trackFileDrag(ev, finderFileMeta(row, nest?.title || loc), row);
     });
     win.addEventListener('contextmenu', e => {
       const trashRow = e.target.closest('[data-trash]');
@@ -3796,7 +4530,7 @@
         sel = trashRow.dataset.trash;
         paint();
         const it = trashItems.find(x => x.id === sel);
-        if (it) toast(it.name + ' — Put Back or Empty from the toolbar');
+        if (it) toast(TRASH_OPEN[it.id] ? it.name + ' — Double-click to open' : it.name + ' — Put Back or Empty from the toolbar');
         return;
       }
       const fileRow = e.target.closest('[data-file]');
@@ -3805,14 +4539,19 @@
         e.stopPropagation();
         sel = fileRow.dataset.file;
         paint();
-        showFileCtx(e.clientX, e.clientY, finderFileMeta(fileRow, loc));
+        const meta = finderFileMeta(fileRow, nest?.title || loc);
+        if (isShotFile(meta.file)) showShotCtx(e.clientX, e.clientY, shotByFile(meta.file), meta);
+        else showFileCtx(e.clientX, e.clientY, meta);
       }
     });
     win.addEventListener('click', e => {
       const btn = e.target.closest('[data-finder]');
       if (!btn) return;
       const act = btn.dataset.finder;
-      if (act === 'back' && hi > 0) { hi -= 1; go(hist[hi], true); }
+      if (act === 'back') {
+        if (nest) { nest = null; sel = null; paint(); }
+        else if (hi > 0) { hi -= 1; go(hist[hi], true); }
+      }
       else if (act === 'fwd' && hi < hist.length - 1) { hi += 1; go(hist[hi], true); }
       else if (act === 'view-icons') { view = 'icons'; paint(); }
       else if (act === 'view-list') { view = 'list'; paint(); }
@@ -3903,6 +4642,7 @@
         return `<button type="button" class="ph-tile${photosSel===ph.id?' on':''}" data-ph="${esc(ph.id)}">${media}<span class="ph-cap"><strong>${esc(ph.title)}</strong><em>${esc(ph.when || '')}</em></span></button>`;
       }).join('') || '<p class="ph-empty">No photos in this album.</p>';
       paintViewer();
+      if (photosSel) grid.querySelector('[data-ph="' + photosSel + '"]')?.scrollIntoView({ block: 'nearest' });
     }
     function paintViewer() {
       if (!viewer) return;
@@ -3923,7 +4663,38 @@
           </div>
         </div>`;
     }
+    function photoToShot(ph) {
+      if (!ph?.src) return null;
+      if (ph.project) {
+        const match = shotsForProject(PROJECTS.find(p => p.id === ph.project)).find(s => s.id === ph.id || s.src === ph.src);
+        if (match) return match;
+      }
+      return {
+        id: ph.id,
+        file: ph.project ? ('shot:' + ph.project + ':0') : ('photo:' + ph.id),
+        project: ph.project,
+        src: ph.src,
+        cap: ph.cap,
+        alt: ph.title,
+        name: shotFileName(ph.src)
+      };
+    }
     paint();
+    win.addEventListener('photos-refresh', paint);
+    win.addEventListener('dblclick', e => {
+      const tile = e.target.closest('[data-ph]');
+      if (!tile || !win.contains(tile)) return;
+      const ph = photoLibrary().find(p => p.id === tile.dataset.ph);
+      const shot = photoToShot(ph);
+      if (shot) {
+        e.preventDefault();
+        photosSel = ph.id;
+        paint();
+        const albumShots = photosInAlbum(photosAlbum).map(photoToShot).filter(Boolean);
+        const i = Math.max(0, albumShots.findIndex(s => s.id === shot.id));
+        openQuickLook(albumShots.length ? albumShots : [shot], i);
+      }
+    });
     win.addEventListener('click', e => {
       const album = e.target.closest('[data-ph-album]');
       if (album && win.contains(album)) {
@@ -4342,6 +5113,16 @@
       top: Math.min(Math.round(h * 0.74), h - 148),
       width: 204
     };
+    layout['sticky-lilac'] = {
+      left: Math.max(openL + 40, Math.min(openR - 220, Math.round(w * 0.55))),
+      top: Math.round(h * 0.46),
+      width: 210
+    };
+    layout['sticky-peach'] = {
+      left: Math.round(Math.min(openR - 210, Math.max(pad + 40, w * 0.18))),
+      top: Math.round(h * 0.44),
+      width: 200
+    };
     const folders = ['icon-projects','icon-experience','icon-education'];
     const folderW = folders.length * iconW + (folders.length - 1) * gx;
     const roomL = pad + heroW + 36;
@@ -4353,10 +5134,17 @@
     folders.forEach((id, i) => {
       layout[id] = { left: ix + i * (iconW + gx), top: y0 };
     });
-    layout['icon-resume'] = { left: ix, top: y0 + iconH + typeGap };
-    const mdY = y0 + iconH + typeGap + iconH + typeGap;
+    const docsY = y0 + iconH + typeGap;
+    layout['icon-resume'] = { left: ix, top: docsY };
+    layout['icon-mail'] = { left: ix + iconW + gx, top: docsY };
+    layout['icon-doodle'] = { left: ix + (iconW + gx) * 2, top: docsY };
+    const mdY = docsY + iconH + typeGap;
     layout['icon-readme'] = { left: ix, top: mdY };
     layout['icon-stack'] = { left: ix + iconW + gx, top: mdY };
+    const funY = mdY + iconH + typeGap;
+    layout['icon-secrets'] = { left: ix, top: funY };
+    layout['icon-todo'] = { left: ix + iconW + gx, top: funY };
+    layout['icon-donotopen'] = { left: ix + (iconW + gx) * 2, top: funY };
     return layout;
   }
   function tidyDeskShells() {
@@ -5265,6 +6053,13 @@
       { label:'Preview', id:'resume', icon:'preview' },
       { label:'Stack.md', id:'stack', icon:'textedit' },
       { label:'README.md', id:'readme', icon:'textedit' },
+      { label:'Secrets', id:'secrets', icon:'folder' },
+      { label:'todo.txt', id:'todo', icon:'textedit' },
+      { label:'do-not-open.txt', id:'donotopen', icon:'textedit' },
+      { label:'passwords.txt', id:'passwords', icon:'textedit' },
+      { label:'commit-messages.txt', id:'commits', icon:'textedit' },
+      { label:'why-i-built-this.md', id:'why', icon:'textedit' },
+      { label:'Mail.app', id:'mail-alias', icon:'mail' },
       { label:'Terminal', id:'terminal', icon:'terminal' },
       { label:'System Settings', id:'settings', icon:'settings' },
       ...PROJECTS.map(p => ({ label: p.title, id: p.id, icon:'folder' }))
@@ -5435,6 +6230,18 @@
       openApp(file.dataset.file);
       return;
     }
+    const shotAct = e.target.closest('[data-shot-act]');
+    if (shotAct) {
+      e.preventDefault();
+      const shot = ctxShot;
+      const actn = shotAct.dataset.shotAct;
+      closeMenus();
+      if (shot && actn === 'preview') openImagePreviewFromShot(shot);
+      if (shot && actn === 'photos') showShotInPhotos(shot);
+      if (shot && actn === 'copy') copyShotImage(shot);
+      ctxShot = null;
+      return;
+    }
     const iconAct = e.target.closest('[data-icon-act]');
     if (iconAct) {
       e.preventDefault();
@@ -5455,7 +6262,7 @@
       openApp(open.dataset.open);
       return;
     }
-    if (proj) { openApp(proj.dataset.project); return; }
+    if (proj && !proj.closest('.csos-shot')) { openApp(proj.dataset.project); return; }
     if (act) {
       const a2 = act.dataset.action;
       if (a2 === 'lock') { closeMenus(); document.getElementById('lock').classList.remove('hidden'); }
@@ -5496,15 +6303,65 @@
 
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape') {
+      if (qlOpen()) { e.preventDefault(); closeQuickLook(); return; }
       if (!document.getElementById('spotlight').hidden) { document.getElementById('spotlight').hidden = true; return; }
       if (!document.getElementById('launchpad').hidden) { closeLaunchpad(); return; }
       if (document.getElementById('notchIsland')?.classList.contains('open')) { closeNook(); return; }
       closeMenus();
       if (state.front) closeWin(state.front);
     }
+    if ((e.key === 'ArrowLeft' || e.key === 'ArrowRight') && !e.target.closest('input, textarea, [contenteditable]')) {
+      const dir = e.key === 'ArrowRight' ? 1 : -1;
+      if (qlOpen()) { e.preventDefault(); stepQuickLook(dir); return; }
+      if (state.front === 'preview-shot') {
+        const n = previewShotState.items.length;
+        if (n > 1) {
+          e.preventDefault();
+          previewShotState.i = (previewShotState.i + dir + n) % n;
+          const win = state.windows.get('preview-shot')?.el;
+          if (win) paintImagePreview(win);
+        }
+      }
+    }
+    if ((e.key === ' ' || e.code === 'Space') && !e.metaKey && !e.ctrlKey && !e.target.closest('input, textarea, [contenteditable]')) {
+      if (qlOpen()) { e.preventDefault(); closeQuickLook(); return; }
+      const front = state.front && document.querySelector('.window[data-id="' + state.front + '"]');
+      const fig = e.target.closest?.('.csos-shot') || (front?.classList.contains('casestudy') && front.querySelector('.csos-shot.sel'));
+      if (fig) {
+        e.preventDefault();
+        const p = PROJECTS.find(x => x.id === fig.dataset.shotProject);
+        const shot = shotsForProject(p)[+fig.dataset.shot];
+        if (shot) openQuickLookFromShot(shot);
+        return;
+      }
+      const deskShot = selectedDeskIcon() && isShotFile(selectedDeskIcon().dataset.file) ? shotByFile(selectedDeskIcon().dataset.file) : null;
+      if (deskShot) { e.preventDefault(); openQuickLookFromShot(deskShot); return; }
+      if (front?.classList.contains('finder')) {
+        const row = front.querySelector('.fitem.on[data-file], .flist-row.on[data-file]');
+        if (row && isShotFile(row.dataset.file)) {
+          e.preventDefault();
+          openQuickLookFromShot(shotByFile(row.dataset.file));
+          return;
+        }
+      }
+      if (front?.classList.contains('photos') && photosSel) {
+        const ph = photoLibrary().find(p => p.id === photosSel);
+        if (ph?.src) {
+          e.preventDefault();
+          const shot = ph.project
+            ? shotsForProject(PROJECTS.find(x => x.id === ph.project)).find(s => s.id === ph.id)
+            : { id: ph.id, src: ph.src, cap: ph.cap, name: shotFileName(ph.src), alt: ph.title };
+          if (shot) openQuickLookFromShot(shot);
+          return;
+        }
+      }
+    }
     if ((e.metaKey || e.ctrlKey) && (e.key === ' ' || e.code === 'Space')) { e.preventDefault(); openSpotlight(); }
     if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); openSpotlight(); }
-    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'w' && state.front) { e.preventDefault(); closeWin(state.front); }
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'w') {
+      if (qlOpen()) { e.preventDefault(); closeQuickLook(); return; }
+      if (state.front) { e.preventDefault(); closeWin(state.front); }
+    }
     if ((e.key === 'Backspace' || e.key === 'Delete') && !e.target.closest('input, textarea, [contenteditable]')) {
       const ic = selectedDeskIcon();
       if (ic) {
@@ -5533,7 +6390,9 @@
     e.preventDefault();
     const ic = e.target.closest('.dicon');
     if (ic && ic.dataset.file && !ic.hidden) {
-      showFileCtx(e.clientX, e.clientY, deskMeta(ic));
+      const meta = deskMeta(ic);
+      if (isShotFile(meta.file) || meta.src) showShotCtx(e.clientX, e.clientY, shotByFile(meta.file) || meta, meta);
+      else showFileCtx(e.clientX, e.clientY, meta);
       return;
     }
     const sticky = e.target.closest('.sticky');
@@ -5572,8 +6431,28 @@
   dockMag();
   enableDrag();
   enableStickyResize();
+  restorePlacedShots();
   restoreDeskLayout();
   syncDeskIcons();
+  (function bindQuickLook() {
+    const wrap = document.getElementById('quickLook');
+    if (!wrap) return;
+    wrap.addEventListener('click', e => {
+      const btn = e.target.closest('[data-ql]');
+      if (!btn) return;
+      const act = btn.dataset.ql;
+      if (act === 'close') closeQuickLook();
+      else if (act === 'prev') stepQuickLook(-1);
+      else if (act === 'next') stepQuickLook(1);
+      else if (act === 'preview') {
+        const shot = currentQlShot();
+        if (shot) openImagePreviewFromShot(shot);
+      } else if (act === 'photos') {
+        const shot = currentQlShot();
+        if (shot) showShotInPhotos(shot);
+      }
+    });
+  })();
   window.addEventListener('resize', () => {
     DESK_IDS().forEach(el => {
       if (!el.classList.contains('loose')) return;

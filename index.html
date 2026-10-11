@@ -92,7 +92,7 @@
   <div class="notch-island mac-only" id="notchIsland">
     <button type="button" class="notch" id="notch" title="NotchNook" aria-expanded="false" aria-controls="nookPanel">
       <svg class="notch-ico" viewBox="0 0 24 24" width="12" height="12"><rect width="24" height="24" rx="6" fill="#ff2d55"/><path d="M9 16a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7-9v8.2a2 2 0 1 0 1.5 2V9.2L20 8.5V6.8z" fill="#fff"/></svg>
-      <span class="notch-label">Dhaka</span>
+      <span class="notch-label">Eastern Thought</span>
       <div class="eq" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
     </button>
     <div class="nook-panel" id="nookPanel">
@@ -103,7 +103,7 @@
               <div class="nook-media-row">
                 <span class="nook-art" id="nookArt" aria-hidden="true"></span>
                 <div class="nook-media-txt">
-                  <strong id="nookTrack">Dhaka</strong>
+                  <strong id="nookTrack">Eastern Thought</strong>
                   <em id="nookArtist">Kevin MacLeod</em>
                 </div>
               </div>
@@ -228,7 +228,7 @@
       <div class="cc-mod cc-now">
         <img class="cc-now-app" src="assets/icons/macos/music.png" alt="" draggable="false"/>
         <div class="cc-now-txt">
-          <strong id="ccTrack">Dhaka</strong>
+          <strong id="ccTrack">Eastern Thought</strong>
           <em id="ccArtist">Kevin MacLeod</em>
         </div>
         <div class="cc-now-ctrls">
@@ -320,7 +320,7 @@
     </div>
     <div class="sticky s-pink mac-only" data-drag="1" data-desk-id="sticky-pink">
       <button type="button" class="pin p-teal" title="Pin in place" aria-label="Pin in place" aria-pressed="false"></button>
-      <p>Cincinnati is 3 hours<br>ahead of whatever time<br>I think it is.</p>
+      <p>I built an entire OS<br>so I wouldn't have to<br>write a cover letter.</p>
       <span class="sticky-resize" aria-label="Resize"></span>
     </div>
     <div class="sticky s-mint mac-only" data-drag="1" data-desk-id="sticky-mint">
@@ -335,14 +335,29 @@
       <p>the Mail app actually<br>works. try it.</p>
       <span class="sticky-resize" aria-label="Resize"></span>
     </div>
-
+    <div class="sticky s-lilac mac-only" data-drag="1" data-desk-id="sticky-lilac">
+      <button type="button" class="pin p-blue" title="Pin in place" aria-label="Pin in place" aria-pressed="false"></button>
+      <p>my sleep schedule<br>has more branches<br>than this repo.</p>
+      <span class="sticky-resize" aria-label="Resize"></span>
+    </div>
+    <div class="sticky s-peach mac-only" data-drag="1" data-desk-id="sticky-peach">
+      <button type="button" class="pin p-rose" title="Pin in place" aria-label="Pin in place" aria-pressed="false"></button>
+      <p>spent 4 hours<br>on the dock bounce.</p>
+      <p>called it architecture.</p>
+      <span class="sticky-resize" aria-label="Resize"></span>
+    </div>
     <div class="desk-icons" id="deskIcons">
       <button class="dicon" data-desk-id="icon-projects" data-file="projects"><img class="appico" src="assets/icons/macos/folder.png" alt="" draggable="false"/><span>Projects</span></button>
       <button class="dicon" data-desk-id="icon-experience" data-file="experience"><img class="appico" src="assets/icons/macos/folder.png" alt="" draggable="false"/><span>Experience</span></button>
       <button class="dicon" data-desk-id="icon-education" data-file="education"><img class="appico" src="assets/icons/macos/folder.png" alt="" draggable="false"/><span>Education</span></button>
       <button class="dicon" data-desk-id="icon-resume" data-file="resume"><img class="appico" src="assets/icons/macos/pdf.svg" alt="" draggable="false"/><span>Resume.pdf</span></button>
+      <button class="dicon" data-desk-id="icon-mail" data-file="mail-alias"><img class="appico" src="assets/icons/macos/mail.png" alt="" draggable="false"/><span>Mail.app</span></button>
+      <button class="dicon" data-desk-id="icon-doodle" data-file="shot:desk:doodle" data-shot-src="assets/readme/desktop-doodle.jpg"><img class="appico shot-thumb" src="assets/readme/desktop-doodle.jpg" alt="" draggable="false"/><span>Screenshot.png</span></button>
       <button class="dicon" data-desk-id="icon-readme" data-file="readme"><img class="appico" src="assets/icons/macos/textedit.png" alt="" draggable="false"/><span>README.md</span></button>
       <button class="dicon" data-desk-id="icon-stack" data-file="stack"><img class="appico" src="assets/icons/macos/textedit.png" alt="" draggable="false"/><span>Stack.md</span></button>
+      <button class="dicon" data-desk-id="icon-secrets" data-file="secrets"><img class="appico" src="assets/icons/macos/folder.png" alt="" draggable="false"/><span>Secrets</span></button>
+      <button class="dicon" data-desk-id="icon-todo" data-file="todo"><img class="appico" src="assets/icons/macos/textedit.png" alt="" draggable="false"/><span>todo.txt</span></button>
+      <button class="dicon" data-desk-id="icon-donotopen" data-file="donotopen"><img class="appico" src="assets/icons/macos/textedit.png" alt="" draggable="false"/><span>do-not-open.txt</span></button>
     </div>
 
     <aside class="col-right" id="widgetStack">
@@ -451,6 +466,42 @@
   <div class="ctx" id="stickyCtx" hidden>
     <button data-sticky-act="pin">Pin to Desktop</button>
     <button data-sticky-act="unpin">Unpin</button>
+  </div>
+  <div class="ctx" id="shotCtx" hidden>
+    <button data-shot-act="preview">Open in Preview</button>
+    <button data-shot-act="photos">Show in Photos</button>
+    <hr/>
+    <button data-shot-act="copy">Copy</button>
+  </div>
+
+  <div id="quickLook" class="ql-overlay" hidden>
+    <div class="ql-scrim" data-ql="close"></div>
+    <div class="ql-panel" role="dialog" aria-modal="true" aria-labelledby="qlName">
+      <div class="ql-bar">
+        <div class="traffic">
+          <button type="button" class="tbtn t-close" data-ql="close" aria-label="Close"></button>
+          <span class="tbtn t-min" aria-hidden="true"></span>
+          <span class="tbtn t-max" aria-hidden="true"></span>
+        </div>
+        <div class="ql-name" id="qlName">Quick Look</div>
+        <div class="ql-count" id="qlCount"></div>
+        <button type="button" class="ql-x" data-ql="close" aria-label="Close">
+          <svg viewBox="0 0 12 12" width="10" height="10" aria-hidden="true"><path d="M2.2 2.2l7.6 7.6M9.8 2.2L2.2 9.8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <div class="ql-stage">
+        <button type="button" class="ql-nav prev" data-ql="prev" aria-label="Previous">‹</button>
+        <figure class="ql-figure">
+          <img id="qlImg" alt=""/>
+          <figcaption id="qlCap"></figcaption>
+        </figure>
+        <button type="button" class="ql-nav next" data-ql="next" aria-label="Next">›</button>
+      </div>
+      <div class="ql-foot">
+        <button type="button" data-ql="preview">Open with Preview</button>
+        <button type="button" data-ql="photos">Show All in Photos</button>
+      </div>
+    </div>
   </div>
 
   <p class="wall-credit mac-only">Landscape wallpaper — Unsplash · NehangOS desktop preview</p>
