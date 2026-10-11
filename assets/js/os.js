@@ -5010,7 +5010,7 @@
   const DESK_IDS = () => [...document.querySelectorAll('[data-desk-id]')];
 
   function deskStoreKey() {
-    return 'nehang-desk-v8-mac';
+    return 'nehang-desk-v10-mac';
   }
   function loadDeskLayout() {
     try { return JSON.parse(localStorage.getItem(deskStoreKey()) || '{}') || {}; }
@@ -5083,7 +5083,7 @@
     const pair = w < 1180 ? 140 : 152;
     const clusterW = pair * 2 + gap;
     const right = Math.max(pad + heroW + 160, w - pad - clusterW);
-    const iconW = 86, iconH = 108, gx = 22, typeGap = 32;
+    const iconW = 86, iconH = 108, gx = 18, rowGap = 28;
     const layout = {
       hero: { left: pad, top, width: heroW },
       weather: { left: right, top, width: pair },
@@ -5092,59 +5092,44 @@
       coffee: { left: right, top: top + pair + gap + 156 + gap, width: clusterW }
     };
     const openL = pad + heroW + 36;
-    const openR = right - 36;
-    layout['sticky-yellow'] = {
-      left: pad + 16,
-      top: Math.min(Math.round(h * 0.56), h - 168),
-      width: 198
-    };
-    layout['sticky-pink'] = {
-      left: Math.max(openL, Math.min(openR - 218, Math.round(w * 0.41))),
-      top: Math.round(h * 0.56),
-      width: 218
-    };
-    layout['sticky-mint'] = {
-      left: Math.round(Math.min(openR - 200, Math.max(pad + 48, w * 0.26))),
-      top: Math.min(Math.round(h * 0.73), h - 150),
-      width: 188
-    };
-    layout['sticky-sky'] = {
-      left: Math.max(openL + 20, Math.min(openR - 280, Math.round(w * 0.48))),
-      top: Math.min(Math.round(h * 0.74), h - 148),
-      width: 204
-    };
-    layout['sticky-lilac'] = {
-      left: Math.max(openL + 40, Math.min(openR - 220, Math.round(w * 0.55))),
-      top: Math.round(h * 0.46),
-      width: 210
-    };
-    layout['sticky-peach'] = {
-      left: Math.round(Math.min(openR - 210, Math.max(pad + 40, w * 0.18))),
-      top: Math.round(h * 0.44),
-      width: 200
-    };
-    const folders = ['icon-projects','icon-experience','icon-education'];
+    const openR = right - 28;
+    const clampSticky = (left, topY, width) => ({
+      left: Math.max(pad, Math.min(openR - width, left)),
+      top: Math.max(top, Math.min(h - 140, topY)),
+      width
+    });
+    /* Default scatter matched to the curated first-load desktop */
+    layout['sticky-yellow'] = clampSticky(pad + 16, Math.round(h * 0.42), 198);
+    layout['sticky-peach'] = clampSticky(Math.round(w * 0.04), Math.round(h * 0.70), 200);
+    layout['sticky-mint'] = clampSticky(Math.round(w * 0.17), Math.round(h * 0.52), 188);
+    layout['sticky-sky'] = clampSticky(Math.round(w * 0.30), Math.round(h * 0.62), 204);
+    layout['sticky-pink'] = clampSticky(Math.round(w * 0.45), Math.round(h * 0.48), 218);
+    layout['sticky-lilac'] = clampSticky(Math.round(w * 0.58), Math.round(h * 0.72), 210);
+
+    /* Center cluster: folders → resume/mail → readme/stack */
+    const folders = ['icon-projects', 'icon-experience', 'icon-education'];
     const folderW = folders.length * iconW + (folders.length - 1) * gx;
-    const roomL = pad + heroW + 36;
-    const roomR = right - 28;
-    const ix = roomR - roomL > folderW
-      ? Math.round(roomL + (roomR - roomL - folderW) / 2)
-      : Math.max(pad, right - 20 - folderW);
-    const y0 = top + 8;
+    const roomL = openL;
+    const roomR = Math.max(roomL + folderW, openR - iconW - 16);
+    const spare = roomR - roomL - folderW;
+    const ix = spare > 0 ? Math.round(roomL + spare * 0.42) : roomL;
+    const y0 = top + 6;
     folders.forEach((id, i) => {
       layout[id] = { left: ix + i * (iconW + gx), top: y0 };
     });
-    const docsY = y0 + iconH + typeGap;
+    const docsY = y0 + iconH + rowGap;
     layout['icon-resume'] = { left: ix, top: docsY };
     layout['icon-mail'] = { left: ix + iconW + gx, top: docsY };
-    layout['icon-doodle'] = { left: ix + (iconW + gx) * 2, top: docsY };
-    const mdY = docsY + iconH + typeGap;
+    const mdY = docsY + iconH + rowGap;
     layout['icon-readme'] = { left: ix, top: mdY };
     layout['icon-stack'] = { left: ix + iconW + gx, top: mdY };
-    const funY = mdY + iconH + typeGap;
-    layout['icon-secrets'] = { left: ix, top: funY };
-    layout['icon-todo'] = { left: ix + iconW + gx, top: funY };
-    layout['icon-donotopen'] = { left: ix + (iconW + gx) * 2, top: funY };
+
+    /* Right icon column (just left of widgets): screenshot + extras */
+    const rx = Math.min(openR - iconW, ix + folderW + 28);
+    layout['icon-doodle'] = { left: rx, top: y0 };
+    layout['icon-donotopen'] = { left: rx, top: mdY };
+    layout['icon-todo'] = { left: rx, top: mdY + iconH + rowGap };
+    layout['icon-secrets'] = { left: rx, top: mdY + (iconH + rowGap) * 2 };
     return layout;
   }
   function tidyDeskShells() {

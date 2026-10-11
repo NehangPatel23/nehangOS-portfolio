@@ -215,31 +215,31 @@ html[data-os="mac"] .stage > .sticky{
   position:absolute;z-index:6;margin:0;
 }
 .sticky.s-yellow{
-  left:38px;top:58%;width:198px;transform:rotate(-3.6deg);z-index:3;
+  left:38px;top:42%;width:198px;transform:rotate(-3.6deg);z-index:3;
 }
 .sticky.s-yellow .pin{left:44%}
 .sticky.s-pink{
-  left:36%;top:48%;width:218px;transform:rotate(4.8deg);z-index:2;
+  left:45%;top:48%;width:218px;transform:rotate(4.8deg);z-index:2;
   background:#ffb7d5;color:#4a1230;
 }
 .sticky.s-pink .pin{left:62%}
 .sticky.s-mint{
-  left:24%;top:72%;width:188px;transform:rotate(2.2deg);z-index:4;
+  left:17%;top:52%;width:188px;transform:rotate(2.2deg);z-index:4;
   background:#c6f5d4;color:#14331f;
 }
 .sticky.s-mint .pin{left:38%}
 .sticky.s-sky{
-  left:48%;top:74%;width:204px;transform:rotate(-4.2deg);z-index:3;
+  left:30%;top:62%;width:204px;transform:rotate(-4.2deg);z-index:3;
   background:#c5e8ff;color:#12324a;
 }
 .sticky.s-sky .pin{left:56%}
 .sticky.s-lilac{
-  left:58%;top:46%;width:210px;transform:rotate(-2.8deg);z-index:2;
+  left:58%;top:72%;width:210px;transform:rotate(-2.8deg);z-index:2;
   background:#e0d4ff;color:#2e1a52;
 }
 .sticky.s-lilac .pin{left:48%}
 .sticky.s-peach{
-  left:18%;top:44%;width:200px;transform:rotate(3.4deg);z-index:3;
+  left:4%;top:70%;width:200px;transform:rotate(3.4deg);z-index:3;
   background:#ffd6b8;color:#4a2410;
 }
 .sticky.s-peach .pin{left:58%}

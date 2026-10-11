@@ -289,19 +289,23 @@ Subject line tips: mention the role. Bonus points if you survived the desktop wi
 ## say hi before the battery hits 1% 🔋
 
 <p align="center">
-  <a href="https://nehang-portfolio.vercel.app"><img src="assets/icons/macos/safari.png" width="28" alt=""/> <b>Live site</b></a>
-  &nbsp;·&nbsp;
-  <a href="mailto:nehangal@usc.edu"><img src="assets/icons/macos/mail.png" width="28" alt=""/> <b>nehangal@usc.edu</b></a>
-  &nbsp;·&nbsp;
-  <a href="https://github.com/NehangPatel23"><img src="assets/icons/macos/github.png" width="28" alt=""/> GitHub</a>
-  &nbsp;·&nbsp;
-  <a href="https://www.linkedin.com/in/nehangpatel/"><img src="assets/icons/macos/linkedin.png" width="28" alt=""/> LinkedIn</a>
+  <img src="assets/readme/say-hi.svg" width="560" alt="Contact — Live site, Email, GitHub, LinkedIn, Resume"/>
 </p>
 
 <p align="center">
-  <img src="assets/icons/macos/preview.png" width="40" alt="Resume"/>
-  <br/>
-  <a href="assets/resume/Resume_Nehang_Patel_Software_Engineer_2026-08.pdf"><em>Resume.pdf</em></a> — two pages, no lore dump
+  <a href="https://nehang-portfolio.vercel.app"><b>Live site</b></a>
+  &nbsp;·&nbsp;
+  <a href="mailto:nehangal@usc.edu"><b>nehangal@usc.edu</b></a>
+  &nbsp;·&nbsp;
+  <a href="https://github.com/NehangPatel23"><b>GitHub</b></a>
+  &nbsp;·&nbsp;
+  <a href="https://www.linkedin.com/in/nehangpatel/"><b>LinkedIn</b></a>
+  &nbsp;·&nbsp;
+  <a href="assets/resume/Resume_Nehang_Patel_Software_Engineer_2026-08.pdf"><b>Resume.pdf</b></a>
+</p>
+
+<p align="center">
+  <sub>two pages, no lore dump</sub>
 </p>
 
 ---
