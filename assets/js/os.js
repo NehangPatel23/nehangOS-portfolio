@@ -3559,14 +3559,15 @@
   }
 
   const MAIL_ADDR = 'nehangal@usc.edu';
-  const WEB3FORMS_KEY = '37c3a97d-369d-4c4c-80c9-2cd2f35bef8b';
+  const ENV = window.__NEHANG_ENV__ || {};
+  const WEB3FORMS_KEY = String(ENV.WEB3FORMS_ACCESS_KEY || '').trim();
   const MAIL_KEY_STORE = 'nehang-w3-key';
   const FIREBASE = {
-    apiKey: 'AIzaSyAWWQGHWjreZTX2KM7NpZdXKUomxFSDwA4',
-    authDomain: 'nehangos.firebaseapp.com',
-    projectId: 'nehangos',
-    storageBucket: 'nehangos.firebasestorage.app',
-    appId: '1:461445655939:web:e3822abb2f9bec02dfdab6'
+    apiKey: String(ENV.FIREBASE_API_KEY || '').trim(),
+    authDomain: String(ENV.FIREBASE_AUTH_DOMAIN || 'nehangos.firebaseapp.com').trim(),
+    projectId: String(ENV.FIREBASE_PROJECT_ID || 'nehangos').trim(),
+    storageBucket: String(ENV.FIREBASE_STORAGE_BUCKET || 'nehangos.firebasestorage.app').trim(),
+    appId: String(ENV.FIREBASE_APP_ID || '').trim()
   };
   const FIREBASE_SDK = 'https://www.gstatic.com/firebasejs/11.6.0';
   function mailKey() {

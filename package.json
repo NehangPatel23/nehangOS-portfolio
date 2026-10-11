@@ -1,0 +1,8 @@
+{
+  "name": "nehang-portfolio-os",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/generate-config.mjs",
+    "predev": "node scripts/generate-config.mjs"
+  }
+}
